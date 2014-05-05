@@ -184,79 +184,79 @@ def build_map():
                         if is_true(get_config_value("more_labyrinthine_map",\
                           "no")):
                             if not (current_room_wrapper.x_coordinate - 1, \
-                              current_room_wrapper.y_coordinate, "East") in\
+                              current_room_wrapper.y_coordinate, "east") in\
                               available_slots:
                                 available_slots.append((\
                                 current_room_wrapper.x_coordinate - 1,\
-                                current_room_wrapper.y_coordinate, "East"))
+                                current_room_wrapper.y_coordinate, "east"))
                         else:
                             available_slots.append((\
                             current_room_wrapper.x_coordinate - 1,\
-                            current_room_wrapper.y_coordinate, "East"))
+                            current_room_wrapper.y_coordinate, "east"))
                     if find_room_wrapper_at(\
                       current_room_wrapper.x_coordinate + 1,
                       current_room_wrapper.y_coordinate) == None:
                         if is_true(get_config_value("more_labyrinthine_map",\
                           "yes")):
                             if not (current_room_wrapper.x_coordinate + 1, \
-                              current_room_wrapper.y_coordinate, "West") in\
+                              current_room_wrapper.y_coordinate, "west") in\
                               available_slots:
                                 available_slots.append((\
                                 current_room_wrapper.x_coordinate + 1,\
-                                current_room_wrapper.y_coordinate, "West"))
+                                current_room_wrapper.y_coordinate, "west"))
                         else:
                             available_slots.append((\
                             current_room_wrapper.x_coordinate + 1,\
-                            current_room_wrapper.y_coordinate, "West"))
+                            current_room_wrapper.y_coordinate, "west"))
                     if find_room_wrapper_at(\
                       current_room_wrapper.x_coordinate,\
                       current_room_wrapper.y_coordinate + 1) == None:
                         if is_true(get_config_value("more_labyrinthine_map",\
                           "yes")):
                             if not (current_room_wrapper.x_coordinate, \
-                              current_room_wrapper.y_coordinate + 1, "South") \
+                              current_room_wrapper.y_coordinate + 1, "south") \
                               in available_slots:
                                 available_slots.append((\
                                 current_room_wrapper.x_coordinate,\
-                                current_room_wrapper.y_coordinate + 1, "South"))
+                                current_room_wrapper.y_coordinate + 1, "south"))
                         else:
                             available_slots.append((\
                             current_room_wrapper.x_coordinate,\
-                            current_room_wrapper.y_coordinate + 1, "South"))
+                            current_room_wrapper.y_coordinate + 1, "south"))
                     if find_room_wrapper_at(\
                       current_room_wrapper.x_coordinate,\
                       current_room_wrapper.y_coordinate - 1) == None:
                         if is_true(get_config_value("more_labyrinthine_map",\
                           "yes")):
                             if (current_room_wrapper.x_coordinate, \
-                              current_room_wrapper.y_coordinate - 1, "North") \
+                              current_room_wrapper.y_coordinate - 1, "north") \
                               in available_slots:
                                 available_slots.append((\
                                 current_room_wrapper.x_coordinate,\
-                                current_room_wrapper.y_coordinate - 1, "North"))
+                                current_room_wrapper.y_coordinate - 1, "north"))
                         else:
                             available_slots.append((\
                             current_room_wrapper.x_coordinate,\
-                            current_room_wrapper.y_coordinate - 1, "North"))
+                            current_room_wrapper.y_coordinate - 1, "north"))
                 new_passage = available_slots[random_range(\
                   len(available_slots))]
                 new_room_wrapper = mutable_room_wrapper()
                 new_room_wrapper.x_coordinate = new_passage[0]
                 new_room_wrapper.y_coordinate = new_passage[1]
                 new_room_wrapper.room_identifier = current_room.identifier
-                if new_passage[2] == "East":
+                if new_passage[2] == "east":
                     dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
                       new_room_wrapper.x_coordinate + 1,\
                       new_room_wrapper.y_coordinate))
-                if new_passage[2] == "West":
+                if new_passage[2] == "west":
                     dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
                       new_room_wrapper.x_coordinate - 1,\
                       new_room_wrapper.y_coordinate))
-                if new_passage[2] == "South":
+                if new_passage[2] == "south":
                     dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
                       new_room_wrapper.x_coordinate,\
                       new_room_wrapper.y_coordinate - 1))
-                if new_passage[2] == "North":
+                if new_passage[2] == "north":
                     dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
                       new_room_wrapper.x_coordinate,\
                       new_room_wrapper.y_coordinate + 1))
@@ -318,23 +318,23 @@ def dig_tunnel(first_room_wrapper, second_room_wrapper):
     if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
       - 1 and first_room_wrapper.y_coordinate ==\
       second_room_wrapper.y_coordinate:
-        first_room_wrapper.neighbors["East"] = second_room_wrapper
-        second_room_wrapper.neighbors["West"] = first_room_wrapper
+        first_room_wrapper.neighbors["east"] = second_room_wrapper
+        second_room_wrapper.neighbors["west"] = first_room_wrapper
     if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
       + 1 and first_room_wrapper.y_coordinate ==\
       second_room_wrapper.y_coordinate:
-        first_room_wrapper.neighbors["West"] = second_room_wrapper
-        second_room_wrapper.neighbors["East"] = first_room_wrapper
+        first_room_wrapper.neighbors["west"] = second_room_wrapper
+        second_room_wrapper.neighbors["east"] = first_room_wrapper
     if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
       and first_room_wrapper.y_coordinate - 1 ==\
       second_room_wrapper.y_coordinate:
-        first_room_wrapper.neighbors["South"] = second_room_wrapper
-        second_room_wrapper.neighbors["North"] = first_room_wrapper
+        first_room_wrapper.neighbors["south"] = second_room_wrapper
+        second_room_wrapper.neighbors["north"] = first_room_wrapper
     if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
       and first_room_wrapper.y_coordinate + 1 ==\
       second_room_wrapper.y_coordinate:
-        first_room_wrapper.neighbors["North"] = second_room_wrapper
-        second_room_wrapper.neighbors["South"] = first_room_wrapper
+        first_room_wrapper.neighbors["north"] = second_room_wrapper
+        second_room_wrapper.neighbors["south"] = first_room_wrapper
 
 def find_available_room_wrapper():
     """Find a wrapper to a room that a player or (initially) the furball may be
@@ -527,13 +527,25 @@ def has_neighbor(identifier, direction, mode):
     if (mode == "edit"):
         return 1
     else:
-        if direction == "self" or direction == "Self" or direction == "stay" \
-          or direction == "Stay":
+        if direction == "self" or direction == "stay":
             return 1
         else:
             try:
-                find_room_wrapper(identifier).neighbors[direction] 
-                return 1
+                if direction == "north":
+                    find_room_wrapper(identifier).neighbors["north"] 
+                    return 1
+                elif direction == "south":
+                    find_room_wrapper(identifier).neighbors["south"] 
+                    return 1
+                elif direction == "east":
+                    find_room_wrapper(identifier).neighbors["east"] 
+                    return 1
+                elif direction == "west":
+                    find_room_wrapper(identifier).neighbors["west"] 
+                    return 1
+                else:
+                    find_room_wrapper(identifier).neighbors[direction] 
+                    return 1
             except KeyError:
                 return 0
 
@@ -1106,9 +1118,9 @@ def output_new_player():
     output_checkbox(1, 0, "last_player", \
       "This is the last player. On to the game!<br>")
     output_submit_button()
-    output_centered_paragraph(0, "(Children under 13 need their parents' " + \
-      "permission to play due to the Children's Online Privacy Protection " + \
-      "Act. Here's the <a href=\"" + \
+    output_centered_paragraph(0, "<br>(Children under 13 need their " + \
+      "parents' permission to play due to the Children's Online Privacy " + \
+      "Protection Act. Here's the <a href=\"" + \
       convert_to_url("privacy.html") + "\" target=\"blank\">privacy " + \
       "policy</a>.)")
 
@@ -1126,8 +1138,8 @@ def output_room_navigation(identifier, mode):
     output("<table style=\"margin-left: auto; margin-right: auto\" " + \
       "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">")
     output("<tr><td></td>")
-    if (has_neighbor(identifier, "North", mode)):
-        output("<td><input type=\"image\" name=\"move\" value=\"North\" " + \
+    if (has_neighbor(identifier, "north", mode)):
+        output("<td><input type=\"image\" name=\"north\" value=\"north\" " + \
           "alt=\"North\" border=\"0\" src=\"" + convert_to_url("north.gif") + \
           "\"></td>")
     else:
@@ -1135,22 +1147,22 @@ def output_room_navigation(identifier, mode):
           convert_to_url("north_shadow.gif") + "\"></td>")
     output("<td></td></tr>")
     output("<tr>")
-    if (has_neighbor(identifier, "West", mode)):
-        output("<td><input type=\"image\" name=\"move\" value=\"West\" " + \
+    if (has_neighbor(identifier, "west", mode)):
+        output("<td><input type=\"image\" name=\"west\" value=\"west\" " + \
           "alt=\"West\" border=\"0\" src=\"" + convert_to_url("west.gif") + \
           "\"></td>")
     else:
         output("<td><img border=\"0\" src=\"" + \
           convert_to_url("west_shadow.gif") + "\"></td>")
-    if (has_neighbor(identifier, "Stay", mode)):
-        output("<td><input type=\"image\" name=\"move\" value=\"Stay\" " + \
+    if (has_neighbor(identifier, "stay", mode)):
+        output("<td><input type=\"image\" name=\"stay\" value=\"stay\" " + \
           "alt=\"Stay Here\" border=\"0\" src=\"" + \
           convert_to_url("stay.gif") + "\"></td>")
     else:
         output("<td><img border=\"0\" src=\"" + \
           convert_to_url("stay_shadow.gif") + "\"></td>")
-    if (has_neighbor(identifier, "East", mode)):
-        output("<td><input type=\"image\" name=\"move\" value=\"East\" " + \
+    if (has_neighbor(identifier, "east", mode)):
+        output("<td><input type=\"image\" name=\"east\" value=\"east\" " + \
           "alt=\"East\" border=\"0\" src=\"" + convert_to_url("east.gif") + \
           "\"></td>")
     else:
@@ -1158,8 +1170,8 @@ def output_room_navigation(identifier, mode):
           convert_to_url("east_shadow.gif") + "\"></td>")
     output("</tr>")
     output("<tr><td></td>")
-    if (has_neighbor(identifier, "South", mode)):
-        output("<td><input type=\"image\" name=\"move\" value=\"South\" " + \
+    if (has_neighbor(identifier, "south", mode)):
+        output("<td><input type=\"image\" name=\"south\" value=\"south\" " + \
           "alt=\"South\" border=\"0\" src=\"" + convert_to_url("south.gif") + \
           "\"></td>")
     else:
@@ -1304,17 +1316,41 @@ def process_changes():
 
 def process_move():
     global game_won
-    move = get_cgi("move")
+    if get_cgi("move").lower() != "":
+        move=get_cgi("move").lower()
+    elif get_cgi("north.x") != "":
+        move="north"
+    elif get_cgi("south.x") != "":
+        move="south"
+    elif get_cgi("east.x") != "":
+        move="east"
+    elif get_cgi("west.x") != "":
+        move="west"
+    else:
+        move="stay"
     if mutable_master.current_player is None:
         return
     else:
         old_room_wrapper = mutable_master.current_player.room_wrapper
-        if move != "Stay":
+        if move != "stay":
             if has_neighbor(mutable_master.current_player.room_wrapper.identifier, \
               move, "play"):
-                mutable_master.current_player.room_wrapper = \
-                  mutable_master.current_player.room_wrapper.neighbors[move]
-        if (move != "Stay" and \
+                if move == "north":
+                    mutable_master.current_player.room_wrapper = \
+                      mutable_master.current_player.room_wrapper.neighbors["north"]
+                elif move == "south":
+                    mutable_master.current_player.room_wrapper = \
+                      mutable_master.current_player.room_wrapper.neighbors["south"]
+                elif move == "east":
+                    mutable_master.current_player.room_wrapper = \
+                      mutable_master.current_player.room_wrapper.neighbors["east"]
+                elif move == "west":
+                    mutable_master.current_player.room_wrapper = \
+                      mutable_master.current_player.room_wrapper.neighbors["west"]
+                else:
+                    mutable_master.current_player.room_wrapper = \
+                      mutable_master.current_player.room_wrapper.neighbors[move]
+        if (move != "stay" and \
           players_in(mutable_master.furball.room_wrapper) != []) or \
           furball_always_tries_to_move():
             room_wrappers_to_hide_in = []
