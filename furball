@@ -651,10 +651,7 @@ def output_additional_options():
 
 def output_card():
     if mutable_master.current_card != "":
-        output("<table style=\"margin-left: auto; margin-right: " + \
-          "auto\"><tr><td>")
-        output_header(1, 1, "Your Card:")
-        output("</td></tr></table>")
+        output_centered_header(1, 1, "Your Card:")
         output("<table width=\"50%\" style=\"margin-left: auto; " + \
           "margin-right: auto\" border=\"0\"" + \
           "cellpadding=\"0\" cellspacing=\"0\">")
@@ -669,13 +666,20 @@ def output_card():
         output("</td></tr>")
         output("</table>\n")
 
+def output_centered_header(header_level, indent_level, text):
+    """Output a centered header of a given HTML header level, indentation
+    level, and text."""
+    output("<h" + str(header_level) + " style=\"margin-left: " + \
+      get_indent_value(indent_level) + "; margin-right: " + \
+      get_indent_value(indent_level) + "; text-align: center\">" + text + \
+        "</h" + str(header_level) + ">\n")
+
 def output_centered_paragraph(indent_level, text):
     """Output a paragraph of a given indentation level and text."""
-    output("<table style=\"margin-left: auto; margin-right: auto\"><tr><td>")
     output("<p style=\"margin-left: " +\
       get_indent_value(indent_level) + "; margin-right: " + \
-      get_indent_value(indent_level) + "; margin-top: 0cm\">" + text + "</p>\n")
-    output("</td></tr></table>")
+      get_indent_value(indent_level) + \
+      "; margin-top: 0cm; text-align: center\">" + text + "</p>\n")
 
 def output_checkbox(indent_level, checked, name, text):
     result="<input type=\"checkbox\" name=\"" + name + "\" value=\"" + \
@@ -705,17 +709,11 @@ def output_display_room(identifier, mode):
         if mode == "play":
             output("<input type=\"hidden\" name=\"mode\" value=\"play\">")
         if room_to_display.name != "":
-            output("<table style=\"margin-left: auto; margin-right: " + \
-              "auto\"><tr><td>")
-            output("<h1><em>" + room_to_display.name + \
-              "</em></h1>")
-            output("</td></tr></table>")
+            output_centered_header(1, 0, "<em>" + room_to_display.name + \
+              "</em>")
         if mode == "play":
-            output("<table style=\"margin-left: auto; margin-right: " + \
-              "auto\"><tr><td>")
-            output("<h2>" + mutable_master.current_player.name + \
-              "'s Turn</h2>")
-            output("</td></tr></table>")
+            output_centered_header(2, 0, mutable_master.current_player.name \
+              + "'s Turn")
             if len(find_room_wrapper(identifier).neighbors.keys()) == 1:
                 output_centered_paragraph(2, "<em>To move, use the arrow " + \
                   "at the bottom of the page.</em>")
@@ -752,16 +750,16 @@ def output_display_room(identifier, mode):
             output_map()
             output("<br><br>")
         if mode == "play" and is_in_normal_use(identifier):
-            output("<table style=\"margin-left: auto; margin-right: " + \
-              "auto\"><tr><td>")
-            output("<h1><em>Your Move:</em></h1>")
-            output("</td></tr></table>")
+            output_centered_header(1, 0, "<em>Your Move:</em>")
             output_room_navigation(identifier, mode)
             output("<br>")
-            output_centered_paragraph(0, "<input type=\"image\" " + \
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<input type=\"image\" " + \
               "name=\"more_options\" value=\"more_options\" border=\"0\" " + \
               "alt=\"More Options\" src=\"" + \
               convert_to_url("more_options.gif") + "\">")
+            output("</td></tr></table>")
         if test_flag(find_room(identifier).flags, "is_introduction"):
             output("<input type=\"hidden\" name=\"mode\" " + \
               "value=\"new_player\">")
@@ -917,7 +915,7 @@ def output_game_quit():
         output("</td></tr></table>")
 
 def output_header(header_level, indent_level, text):
-    """Output an HTML header of a given HTML level, indentation level, and
+    """Output a header of a given HTML header level, indentation level, and
     text."""
     output("<h" + str(header_level) + " style=\"margin-left: " + \
       get_indent_value(indent_level) + "; margin-right: " + \
@@ -1015,10 +1013,7 @@ def output_map():
                 lowest_x_coordinate = current_room_wrapper.x_coordinate
             if current_room_wrapper.y_coordinate < lowest_y_coordinate:
                 lowest_y_coordinate = current_room_wrapper.y_coordinate
-    output("<table style=\"margin-left: auto; margin-right: " + \
-      "auto\"><tr><td>")
-    output_header(1, 1, "The Map:")
-    output("</td></tr></table>")
+    output_centered_header(1, 1, "The Map:")
     output("<table style=\"margin-left: auto; margin-right: auto\" " + \
       "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">")
     output("<tr><td class=\"map_border\">")

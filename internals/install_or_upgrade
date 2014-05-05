@@ -288,7 +288,7 @@ Do you wish to use the new game data (yes/no)""")
               get_value(should_replace_game_data)
             output(\
 """
-As of version 1.0, an updated page beginning and ending are available. It is
+As of version 1.0.1, an updated page beginning and ending are available. It is
 strongly suggested that you use the new beginning unless you have customized
 your page beginning and endings. (In that case it is suggested that you look at
 ./data/page_header and update your HTML accordingly.)
