@@ -1,0 +1,139 @@
+README for the Magic Notebook 1.2.1
+
+LEGAL
+
+    For the duration of this copyright statement, 'this software' and
+    'Catch the Furball' are taken to mean all original files distributed with
+    this product, and the arrangement and other original work related to this
+    product.
+
+    License
+
+        This software is copyright 2003 by Jonathan Hayward, and licensed
+        to you under the Artistic License, which should be present in the
+        file license.txt; if you did not receive this file, consult the
+        version online at http://www.perl.com/language/misc/Artistic.html.
+
+    Warrantee
+
+        Jonathan Hayward makes no warranties, express or implied,
+        regarding this software.  In no event shall Jonathan Hayward be
+        liable for any consequential, special, incidental, or indirect
+        damages of any kind arising out of the license of, use of,
+        or inability to use any software or product covered under
+        this license, even if Jonathan Hayward has been advised of the
+        possibility of such damages.  This limitation of liability and
+        risks is reflected in the price of this software.
+
+PURPOSE
+
+    Catch the Furball is published for two reasons:
+
+    1: To provide an icebreaker board game something like Generica
+       ( http://JonathansCorner.com/etc/generica ) in which it is not necessary
+       to create a board and cut up boards, but rather can be played
+       immediately through an attractive web interface.
+
+    2: To make the engine for the above mentioned game available so that people
+       can create their own analogous games.
+
+INSTALLATION AND SETUP
+
+    Basics
+
+        * Run "./install" and answer the questions provided.  This will
+          run a Unix-flavor install script and should create
+          a working, out-of-the-box installation when supplied
+          appropriate values.
+
+        * Edit the privacy policy, stored in
+          <the public Catch the Furball HTML directory>/privacy.html, so that
+          its contents are appropriate to your site.
+
+        * See USAGE below if are curions about how to use Catch the Furball.
+
+        * The install script is not meant to fully customize Catch
+          the Furball, only to get it running.  See Customization below for
+          further information on how to adjust Snippets to meet your needs.
+
+        Customization
+
+            To customize the content of pages, edit the configuration file at
+            <the private Catch the Furball data directory>/config and set
+            "edit_is_enabled" to "yes" (no quotation marks) and "edit_password"
+            to a value other than its default of "xyzzy". Then visit the
+            script's usual URL with "?edit=yes" added to the end, and log in.
+            You will be at a web interface that will allow you to edit the
+            script's content with the same power as was used to create it.
+
+            If you wish to create a game with completely new cards, pictures,
+            etc., you can clean the slate by deleting
+            <the private Catch the Furball data directory/pickled/data.immutable
+            and going to edit as described in the paragraph above.
+
+            For other configuration, The configuration file at
+            <the private Catch the Furball data directory>/config is
+            commented and can be adjusted to control how the script works.
+
+            The beginning and ending of a page are read from
+            <the private Catch the Furball data directory>/page_header and
+            <the private Catch the Furball data directory>/page_footer
+            respectively.  Editing those files provides an effective way to
+            customize page appearance: colors, for instance, may be changed by
+            editing the CSS in the page header.
+
+            The images used for various purposes are found in
+            <the public Catch the Furball HTML directory> and may be replaced
+            with images tailored to your site's needs.
+
+        Security
+
+            The present release of Catch the Furball has not been closely
+            scrutinized for security, and should be treated as such by
+            security-conscious administrators.  If you discover a
+            vulnerability, please contact the author at
+            jonathan.hayward@pobox.com with details.
+
+            The default installation sets
+            <the private Catch the Furball data directory> and contents
+            to a relatively permissive mode.  Administrators are encouraged to
+            set directory and contents to mode 700, owned by the
+            effective user ID that CGI scripts will be running under. This
+            is usually apache or nobody.
+
+USAGE
+
+    Catch the Furball is designed to be run as a straightforward web
+    application, with much administrative activity performed on-web.
+    Rather than trying to explain how to use it, I simply encourage you
+    to explore. To play Catch the Furball, go to:
+
+        http://[your hostname]/cgi-bin/furball
+
+    To edit it, go to:
+
+        http://[your hostname]/cgi-bin/furball?edit=yes
+
+    (That is the location provided by RPM installation and the default for the
+    provided installer. The provided installer allows you to specify another
+    location; if you specified another location, substitute that for
+    "/cgi-bin/furball".)
+
+NOTES
+
+    Payment
+
+        Catch the Furball is linkware. It is available to you free of charge.
+        If you like it, I would be very happy if you would visit
+        http://JonathansCorner.com and consider linking to it.
+
+    Bugs
+
+        For security-related concerns, see Security above.
+
+    Contact
+
+        The author can be contacted at jonathan.hayward@pobox.com, and
+        maintains a website at http://JonathansCorner.com. The current version
+        of Catch the Furball may be obtained from
+        http://JonathansCorner.com/etc/furball/ .

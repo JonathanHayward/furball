@@ -1,0 +1,1365 @@
+#!FULL_PYTHON_PATH
+
+#
+# Catch the Furball is copyright 2003 by Jonathan Hayward, comes with NO
+# WARRANTY, is released under the Artistic License, and has home page at
+# http://JonathansCorner.com/etc/furball/ . See the file README for details.
+#
+
+"""CGI script to let people play an icebreaker board game, Catch the Furball,
+at a computer."""
+
+import cgi, ConfigParser, cPickle, os, random, re, string, sys
+
+# Classes.
+
+class ancestor:
+    """The ancestor to all other classes defined here. Treat as abstract."""
+    def __init__(self):
+        pass
+
+class ancestor_immutable(ancestor):
+    """The ancestor to all immutable objects defined here. Treat as abstract."""
+    def __init__(self):
+        ancestor.__init__(self)
+        self.identifier = self.get_next_identifier()
+    def get_next_identifier(self):
+        """Get an identifier that has not been used before."""
+        global immutable_master
+        if immutable_master != None:
+            immutable_master.highest_identifier += 1
+            return "immutable_" + \
+              str(immutable_master.highest_identifier)
+        else:
+            return "immutable_0"
+
+class ancestor_mutable(ancestor):
+    """The ancestor to all mutable objects defined here. Treat as abstract."""
+    def __init__(self):
+        ancestor.__init__(self)
+        self.identifier = self.get_next_identifier()
+    def get_next_identifier(self):
+        """Get an identifier that has not been used before."""
+        global mutable_master
+        if mutable_master != None:
+            mutable_master.highest_identifier += 1
+            return "mutable_" + \
+              str(mutable_master.highest_identifier)
+        else:
+            return "mutable_0"
+
+class body(ancestor_mutable):
+    """Something that can be found in a room. Players, the furball, and
+      eventually discoverable items are/will be creatures."""
+    def __init__(self):
+        ancestor_mutable.__init__(self)
+        self.room_wrapper = None
+
+class furball(body):
+    """What the players are trying to catch."""
+    def __init__(self):
+        body.__init__(self)
+        mutable_master.furball = self
+
+class immutable_serializer_linker(ancestor_immutable):
+    """The master object which keeps (direct or indirect) reference to all
+    other immutable objects for serialization purposes. 'Immutable' here does
+    not mean absolutely immutable, but something that should not change in the
+    ordinary course of play: data for rooms comes readily to mind."""
+    highest_identifier = 0
+    def __init__(self):
+        ancestor_immutable.__init__(self)
+        self.highest_identifier = 0
+        self.rooms = []
+
+class map(ancestor_mutable):
+    """An object that keeps track of the location of room."""
+    def __init__(self):
+        ancestor_mutable.__init__(self)
+        self.rooms = []
+
+class mutable_room_wrapper(ancestor_mutable):
+    """A wrapper class which contains mutable information concerning a
+    room--material which can change from one session to another, like its
+    coordinates and location on the map."""
+    def __init__(self):
+        global mutable_master
+        ancestor_mutable.__init__(self)
+        self.neighbors = {}
+        self.room_identifier = ""
+        self.x_coordinate = 0
+        self.y_coordinate = 0
+        mutable_master.room_wrappers.append(self)
+
+class mutable_serializer_linker(ancestor_mutable):
+    """The master object which keeps (direct or indirect) reference to all
+    other mutable objects for serialization purposes."""
+    highest_identifier = 0
+    def __init__(self):
+        ancestor_mutable.__init__(self)
+        self.beginning = None
+        self.current_card = ""
+        self.current_player = None
+        self.current_player_index = 0
+        self.furball = None
+        self.highest_identifier = 0
+        self.map = None
+        self.players = []
+        self.room_wrappers = []
+
+class player(body):
+    """A player."""
+    def __init__(self):
+        ancestor_mutable.__init__(self)
+        body.__init__(self)
+        self.name = ""
+        mutable_master.players.append(self)
+
+class room(ancestor_immutable):
+    """A room where players and the furball can be."""
+    def __init__(self):
+        ancestor_immutable.__init__(self)
+        self.cards = []
+        self.flags = ""
+        self.image_height = ""
+        self.image_url = ""
+        self.image_width = ""
+        self.name = ""
+        self.room_text = ""
+        immutable_master.rooms.append(self)
+
+class turn_tracker(ancestor_mutable):
+    """The class that keeps track of whose turn it is."""
+    def __init__(self):
+        ancestor_mutable.__init__(self)
+        self.players = []
+        self.current_player = None
+
+# Functions.
+
+def authenticate(mode):
+    """When necessary, authenticate that the right password has been supplied
+    for priveleged operations."""
+    if mode == "create_new_room" or mode == "delete_room" or mode == "edit" \
+      or mode == "edit_room" or mode == "view_edited_room":
+        if cgi_form.has_key("password"):
+            if cgi_form["password"].value == get_password() and \
+              is_true(get_config_value("edit_is_enabled", "no")):
+                global immutable_master_may_have_changed
+                immutable_master_may_have_changed = 1
+                return 1
+            else:
+                return 0
+    elif mode == "" or mode == "default" or mode == "new_player" or \
+      mode == "play":
+        return 1
+    else:
+        return 0
+
+def authentication_failed():
+    """Print an appropriate message when authentication has failed."""
+    output("""<p>We're sorry, but you did not supply the correct password to
+    edit these pages. Please try again...</p>""")
+
+def build_map():
+    """Build the (mutable) map for a given game."""
+    # For each room:
+    # If it's the first, put it at (0, 0).
+    # Else:
+    #    Compile (with repetition of coordinates) a list of directions and
+    #      coordinates not taken.
+    #    Select one at random.
+    #    Place it there, make passageways to and from the parent, and
+    #      conditionally make passageways to neighbors.
+    first_room_processed = 0
+    for current_room in immutable_master.rooms:
+        if is_in_normal_use(current_room.identifier):
+            if first_room_processed:
+                available_slots = []
+                for current_room_wrapper in mutable_master.room_wrappers:
+                    if find_room_wrapper_at(\
+                      current_room_wrapper.x_coordinate - 1,
+                      current_room_wrapper.y_coordinate) == None:
+                          available_slots.append((\
+                          current_room_wrapper.x_coordinate - 1,
+                          current_room_wrapper.y_coordinate, "East"))
+                    if find_room_wrapper_at(\
+                      current_room_wrapper.x_coordinate + 1,
+                      current_room_wrapper.y_coordinate) == None:
+                          available_slots.append((\
+                          current_room_wrapper.x_coordinate + 1,
+                          current_room_wrapper.y_coordinate, "West"))
+                    if find_room_wrapper_at(\
+                      current_room_wrapper.x_coordinate,
+                      current_room_wrapper.y_coordinate + 1) == None:
+                          available_slots.append((\
+                          current_room_wrapper.x_coordinate,
+                          current_room_wrapper.y_coordinate + 1, "South"))
+                    if find_room_wrapper_at(\
+                      current_room_wrapper.x_coordinate,
+                      current_room_wrapper.y_coordinate - 1) == None:
+                          available_slots.append((\
+                          current_room_wrapper.x_coordinate,
+                          current_room_wrapper.y_coordinate - 1, "North"))
+                new_passage = available_slots[random_range(\
+                  len(available_slots))]
+                new_room_wrapper = mutable_room_wrapper()
+                new_room_wrapper.x_coordinate = new_passage[0]
+                new_room_wrapper.y_coordinate = new_passage[1]
+                new_room_wrapper.room_identifier = current_room.identifier
+                if new_passage[2] == "East":
+                    dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                      new_room_wrapper.x_coordinate + 1,\
+                      new_room_wrapper.y_coordinate))
+                if new_passage[2] == "West":
+                    dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                      new_room_wrapper.x_coordinate - 1,\
+                      new_room_wrapper.y_coordinate))
+                if new_passage[2] == "South":
+                    dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                      new_room_wrapper.x_coordinate,\
+                      new_room_wrapper.y_coordinate - 1))
+                if new_passage[2] == "North":
+                    dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                      new_room_wrapper.x_coordinate,\
+                      new_room_wrapper.y_coordinate + 1))
+                if find_room_wrapper_at(new_room_wrapper.x_coordinate - 1,
+                  new_room_wrapper.y_coordinate) != None:
+                    if should_dig_random_tunnel():
+                        dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                          new_room_wrapper.x_coordinate - 1,\
+                          new_room_wrapper.y_coordinate))
+                if find_room_wrapper_at(new_room_wrapper.x_coordinate + 1,
+                  new_room_wrapper.y_coordinate) != None:
+                    if should_dig_random_tunnel():
+                        dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                          new_room_wrapper.x_coordinate + 1,\
+                          new_room_wrapper.y_coordinate))
+                if find_room_wrapper_at(new_room_wrapper.x_coordinate,
+                  new_room_wrapper.y_coordinate - 1) != None:
+                    if should_dig_random_tunnel():
+                        dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                          new_room_wrapper.x_coordinate,\
+                          new_room_wrapper.y_coordinate - 1))
+                if find_room_wrapper_at(new_room_wrapper.x_coordinate,
+                  new_room_wrapper.y_coordinate + 1) != None:
+                    if should_dig_random_tunnel():
+                        dig_tunnel(new_room_wrapper, find_room_wrapper_at(\
+                          new_room_wrapper.x_coordinate,\
+                          new_room_wrapper.y_coordinate + 1))
+            else:
+                new_room_wrapper = mutable_room_wrapper()
+                new_room_wrapper.x_coordinate = 0
+                new_room_wrapper.y_coordinate = 0
+                new_room_wrapper.room_identifier = current_room.identifier
+                first_room_processed = 1
+
+def clear_flag(current_value, flag):
+    """Clear a flag in a given text. Returns a string with the flag cleared."""
+    if test_flag(current_value, flag):
+        result = string.replace(current_value, flag, "")
+        return compress_spaces(result)
+    else:
+        return current_value
+
+def compress_spaces(text):
+    """Compress all instances of 1 or more whitespace characters in a given
+    text to one space."""
+    (result, count) = re.subn("\s+", " ", text)
+    return result
+
+def convert_to_url(name_without_path):
+    """Take the end of a path and convert to a relative or absolute URL as
+    appropriate."""
+    return get_config_value("document_url", "/furball") + "/" + \
+      name_without_path
+
+def dig_tunnel(first_room_wrapper, second_room_wrapper):
+    """Dig a tunnel, or passageway, between two adjacent rooms. This only has
+    effect if the rooms differ by one in x coordinate, or y coordinate, but not
+    both--i.e. if they're squares that share a side on the grid."""
+    if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
+      - 1 and first_room_wrapper.y_coordinate ==\
+      second_room_wrapper.y_coordinate:
+        first_room_wrapper.neighbors["East"] = second_room_wrapper
+        second_room_wrapper.neighbors["West"] = first_room_wrapper
+    if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
+      + 1 and first_room_wrapper.y_coordinate ==\
+      second_room_wrapper.y_coordinate:
+        first_room_wrapper.neighbors["West"] = second_room_wrapper
+        second_room_wrapper.neighbors["East"] = first_room_wrapper
+    if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
+      and first_room_wrapper.y_coordinate - 1 ==\
+      second_room_wrapper.y_coordinate:
+        first_room_wrapper.neighbors["South"] = second_room_wrapper
+        second_room_wrapper.neighbors["North"] = first_room_wrapper
+    if first_room_wrapper.x_coordinate == second_room_wrapper.x_coordinate \
+      and first_room_wrapper.y_coordinate + 1 ==\
+      second_room_wrapper.y_coordinate:
+        first_room_wrapper.neighbors["North"] = second_room_wrapper
+        second_room_wrapper.neighbors["South"] = first_room_wrapper
+
+def find_available_room_wrapper():
+    """Find a wrapper to a room that a player or (initially) the furball may be
+    placed in."""
+    available_wrappers = []
+    for current_wrapper in mutable_master.room_wrappers:
+        current_room = find_room(current_wrapper.identifier)
+        if mutable_master.furball.room_wrapper != current_wrapper and \
+          is_in_normal_use(current_room.identifier):
+            available_wrappers.append(current_wrapper)
+    if len(available_wrappers) > 0:
+        return available_wrappers[random_range(len(available_wrappers))]
+    else:
+        return None
+
+def find_ending_room():
+    """Find the wrapper to the beginning room."""
+    for candidate in immutable_master.rooms:
+        try:
+            if test_flag(candidate.flags, "is_ending"):
+                return candidate
+        except AttributeError:
+            pass
+    return None
+
+def find_introduction_room():
+    """Find the wrapper to the beginning room."""
+    for candidate in immutable_master.rooms:
+        if test_flag(candidate.flags, "is_introduction"):
+            return candidate
+    return None
+
+def find_quit_room():
+    """Find the wrapper to the quitter's room."""
+    for candidate in immutable_master.rooms:
+        if test_flag(candidate.flags, "is_quit"):
+            return candidate
+    return None
+
+def find_room(identifier):
+    """Find a room by either the identifier of a room or its wrapper."""
+    for candidate in immutable_master.rooms:
+        if candidate.identifier == identifier:
+            return candidate
+    try:
+        for candidate_wrapper in mutable_master.room_wrappers:
+            if candidate_wrapper.identifier == identifier:
+                return find_room(candidate_wrapper.room_identifier)
+    except AttributeError:
+        pass
+    return None
+
+def find_room_wrapper(identifier):
+    """Find a room wrapper by either the identifier of a wrapper or its
+    room."""
+    for candidate in mutable_master.room_wrappers:
+        if candidate.identifier == identifier or candidate.room_identifier \
+          == identifier:
+            return candidate
+    return None
+
+def find_room_wrapper_at(x_coordinate, y_coordinate):
+    for candidate in mutable_master.room_wrappers:
+        if candidate.x_coordinate == x_coordinate and \
+          candidate.y_coordinate == y_coordinate and \
+          is_in_normal_use(candidate.room_identifier):
+            return candidate
+    return None
+
+def get_absolute_path(name):
+    """Get the absolute path for a file given its relative path to the script's
+    home directory."""
+    return get_config_value("data_root",\
+      "DATA_ROOT") + "/" + \
+      name
+
+def get_action_method():
+    """Get the action method for the main form. Should be set to "post" for
+    production purposes."""
+    return get_config_value("action_method", "post")
+
+def get_action_url():
+    """Get the action URL for the program."""
+    return get_config_value("action_url", "/cgi-bin/furball")
+
+def get_border_width():
+    """Return the thickness, in pixels, of the border for images, cards, and
+    the map."""
+    return get_config_value("border_width", "7")
+
+def get_cgi(field_name):
+    """Convenience function: Get the CGI value for a field, "" if undefined."""
+    if cgi_form.has_key(field_name):
+        return cgi_form[field_name].value
+    else:
+        return ""
+
+def get_config_filename():
+    """Get the name of the config file."""
+    return "CONFIG_FILENAME"
+
+def get_config_value(name, default):
+    """Get the value of a specified key from the config file. If the key is not
+    found, return the specified default."""
+    global config
+    if config.has_option("DEFAULT", name):
+        return config.get("DEFAULT", name)
+    else:
+        return default
+
+def get_creature_name():
+    """Get the name of the creature the players are trying to catch ("The
+    Furball" by default.)"""
+    return get_config_value("creature_name", "The Furball")
+
+def get_htmlized_text(indent_level, text, css_class):
+    """Take text and output it, putting an HTML line break at every line break
+    between lines of text and a paragraph break at every instance of two or
+    more blank lines between text. A line of text is considered blank if it
+    contains no non-whitespace characters."""
+    text_without_carriage_returns = string.replace(text, "\r", "")
+    split_text = string.split("\n" + text_without_carriage_returns + "\n", \
+      "\n")
+    result = ""
+    current_index = 0
+    for current_line in split_text:
+        result += current_line
+        if current_index < len(split_text) - 1:
+            if re.search("^\s*$", current_line):
+                if re.search("^\s*$", split_text[current_index + 1]):
+                    result += "\n"
+                else:
+                    if css_class != "":
+                        result += "\n<p class=\"" + css_class + "\" " + \
+                          "style=\"margin-left: " + \
+                          get_indent_value(indent_level) + "; margin-right: " \
+                          + get_indent_value(indent_level) + "\">"
+                    else:
+                        result += "\n<p style=\"margin-left: " + \
+                          get_indent_value(indent_level) + "; margin-right: " \
+                          + get_indent_value(indent_level) + "\">"
+            else:
+                if re.search("^\s*$", split_text[current_index + 1]):
+                    result += "</p>\n"
+                else:
+                    result += "<br>\n"
+        current_index += 1
+    return result
+
+def get_indent_value(number_of_indents):
+    """Get the HTML CSS indent value for a given level of indentation."""
+    return str(number_of_indents) + "cm"
+
+def get_map_cell_height():
+    """Get the height of a table cell in the displayed map."""
+    return "50"
+
+def get_map_cell_width():
+    """Get the width of a table cell in the displayed map."""
+    return "50"
+
+def get_pickled_data_filename(which_file):
+    """Get the filename for pickled data."""
+    if which_file == "mutable":
+        return get_absolute_path("pickled/data.mutable." + get_visitors_ip())
+    elif which_file == "immutable":
+        return get_absolute_path("pickled/data.immutable")
+    else:
+        output_error("Tried to load invalid save file " + which_file + ".")
+        return get_absolute_path("data")
+
+def get_password():
+    """Get the password necessary to make changes."""
+    return get_config_value("edit_password", "xyzzy")
+
+def get_text_width():
+    return get_config_value("text_width", "80")
+
+def get_visitors_ip():
+    """Get the visitor's IP address."""
+    return os.environ["REMOTE_ADDR"]
+
+def has_neighbor(identifier, direction, mode):
+    if (mode == "edit"):
+        return 1
+    else:
+        if direction == "self" or direction == "Self" or direction == "stay" \
+          or direction == "Stay":
+            return 1
+        else:
+            try:
+                find_room_wrapper(identifier).neighbors[direction] 
+                return 1
+            except KeyError:
+                return 0
+
+def init():
+    """The initialization routine. Does not include the call to parse the CGI
+    input."""
+    global config, game_won, mutable_data_has_been_deleted
+    config = ConfigParser.ConfigParser()
+    config.read(get_config_filename())
+    game_won = 0
+    mutable_data_has_been_deleted = 0
+    load_or_create_data()
+
+def is_in_normal_use(identifier):
+    """Is a room in normal use as a room on the map? True if the room is not
+    the introduction or ending and is not hidden."""
+    corresponding_room = find_room(identifier)
+    if corresponding_room != None:
+        if not test_flag(corresponding_room.flags, "is_ending") and \
+          not test_flag(corresponding_room.flags, "is_hidden") and \
+          not test_flag(corresponding_room.flags, "is_introduction") and \
+          not test_flag(corresponding_room.flags, "is_quit"):
+            return 1
+        else:
+            return 0
+    else:
+        return 0
+
+def is_true(option_value):
+    """Test whether a supplied string should be interpreted as true. This will
+    happen if the value, converted to lowercase, is "true", "yes", "on", or
+    "1"."""
+    if option_value.lower() == "true":
+        return 1
+    elif option_value.lower() == "yes":
+        return 1
+    elif option_value.lower() == "on":
+        return 1
+    elif option_value.lower() == "1":
+        return 1
+    else:
+        return 0
+
+def load_or_create_data():
+    """Load the data if it exists; create it if it doesn't."""
+    global immutable_master, mutable_master
+    if os.path.exists(get_pickled_data_filename("immutable")):
+        file = open(get_pickled_data_filename("immutable"))
+        immutable_master = cPickle.load(file)
+        file.close()
+    else:
+        immutable_master = immutable_serializer_linker()
+    if os.path.exists(get_pickled_data_filename("mutable")):
+        file = open(get_pickled_data_filename("mutable"))
+        mutable_master = cPickle.load(file)
+        file.close()
+    else:
+        mutable_master = mutable_serializer_linker()
+        mutable_master.furball = furball()
+        build_map()
+
+def next_players_turn():
+    mutable_master.current_player_index = \
+      (mutable_master.current_player_index + 1) % len(mutable_master.players)
+    mutable_master.current_player = \
+      mutable_master.players[mutable_master.current_player_index]
+    update_current_card()
+
+def output(text):
+    """Output a given piece of text. All output should be channeled through
+    this function."""
+    #print text
+    sys.stdout.write(text)
+
+def output_additional_options():
+    output("<input type=\"hidden\" name=\"mode\" value=\"play\">")
+    output("<input type=\"hidden\" name=\"no_process_move\" " + \
+      "value=\"no_process_move\">")
+    output_paragraph(1, "<input type=\"radio\" name=\"change_made\" " + \
+      "value=\"new_player\"> Add a new player.")
+    output_paragraph(2, "Name or Nickname:")
+    output_paragraph(2, "<input type=\"text\" name=\"player_name\" " + \
+      "width=\"" + get_text_width() + "\">")
+    output_paragraph(2, "(Children under 13 need their parents' " + \
+      "permission to play due to the Children's Online Privacy Protection " + \
+      "Act. Here's the <a href=\"" + \
+      convert_to_url("privacy.html") + "\" target=\"blank\">privacy " + \
+      "policy</a>.)")
+    output_ruler()
+    if len(mutable_master.players) > 1:
+        output_paragraph(1, "<input type=\"radio\" name=\"change_made\" " + \
+          "value=\"delete_player\"> Delete a player.")
+        output("<p style=\"margin-left: " + get_indent_value(2) + \
+          "; margin-right: " + get_indent_value(2) + "\">")
+        players_duplicate = []
+        for current in mutable_master.players:
+            players_duplicate.append(current)
+        players_duplicate.sort(lambda x, y: cmp(x.name.lower(), \
+          y.name.lower()))
+        for current_player in players_duplicate:
+            output("<input type=\"radio\" name=\"player_to_delete\" " + \
+              "value=\"" + current_player.identifier + "\"> " + \
+              current_player.name + "<br>\n")
+        output("</p>")
+        output_ruler()
+    output_paragraph(1, "<input type=\"radio\" name=\"change_made\" " + \
+      "value=\"end_game\"> <strong>END</strong> the current game.")
+    output_ruler()
+    output_paragraph(1, "<input type=\"radio\" name=\"change_made\" " + \
+      "value=\"resume_play\" checked> Go back to playing the game.")
+    output_submit_button()
+
+def output_card():
+    if mutable_master.current_card != "":
+        output("<table width=\"50%\" align=\"center\" border=\"0\"" + \
+          "cellpadding=\"0\" cellspacing=\"0\">")
+        output("<tr><td class=\"card_border\">")
+        output("<table width=\"100%\" border=\"0\" cellspacing=\"" +
+          get_border_width() + "\" " + "cellpadding=\"15\">")
+        output("<tr><td class=\"card_proper\">")
+        output(get_htmlized_text(0, "<em>" + mutable_master.current_card + \
+          "</em>", "card_text"))
+        output("</td></tr>")
+        output("</table>")
+        output("</td></tr>")
+        output("</table>\n")
+
+def output_centered_paragraph(indent_level, text):
+    """Output a paragraph of a given indentation level and text."""
+    output("<p align=\"center\" style=\"margin-left: " +\
+      get_indent_value(indent_level) + "; margin-right: " + \
+      get_indent_value(indent_level) + "\">" + text + "</p>\n")
+
+def output_checkbox(indent_level, checked, name, text):
+    result="<input type=\"checkbox\" name=\"" + name + "\" value=\"" + \
+      name + "\"" 
+    if checked:
+        result = result + " checked"
+    result = result + "> " + text
+    output_paragraph(indent_level, result)
+
+def output_default():
+    """Give the default output when a user connects."""
+    if find_introduction_room() != None:
+        output_display_room(find_introduction_room().identifier, \
+          "introduction")
+    else:
+        output_paragraph(1, "Welcome to this game.")
+
+def output_diagnostic(text):
+    """Output a segment of diagnostic text."""
+    output_header(1, 0, text)
+
+def output_display_room(identifier, mode):
+    """Display the contents of a given room. The mode is either "play", for
+    normal play, or "edit", for a demonstration in edit mode."""
+    room_to_display = find_room(identifier)
+    if room_to_display is not None:
+        if mode == "play":
+            output("<input type=\"hidden\" name=\"mode\" value=\"play\">")
+        if room_to_display.name != "":
+            output("<h1 align=\"center\"><em>" + room_to_display.name + \
+              "</em></h1>")
+        if mode == "play":
+            output("<h2 align=\"center\">" + \
+              mutable_master.current_player.name + "'s Turn</h2>")
+            if len(find_room_wrapper(identifier).neighbors.keys()) == 1:
+                output_centered_paragraph(2, "<em>To move, use the arrow " + \
+                  "at the bottom of the page.</em>")
+            else:
+                output_centered_paragraph(2, "<em>To move, use the arrows " + \
+                  "at the bottom of the page.</em>")
+        if room_to_display.image_url != "":
+            output("<table align=\"center\" border=\"0\"" + \
+              "cellpadding=\"0\" cellspacing=\"0\">")
+            output("<tr><td class=\"picture_border\">")
+            output("<table border=\"0\" cellspacing=\"" + \
+              get_border_width() + "\" " + "cellpadding=\"0\">")
+            output("<tr><td class=\"picture_proper\">")
+            image_text = "<img src=\"" + \
+              convert_to_url(room_to_display.image_url) + "\""
+            if room_to_display.image_width != "":
+                image_text += " width=\"" + room_to_display.image_width + "\""
+            if room_to_display.image_height != "":
+                image_text += " height=\"" + room_to_display.image_height + \
+                  "\""
+            image_text += " alt=\"\">"
+            output(image_text)
+            output("</td></tr>")
+            output("</table>")
+            output("</td></tr>")
+            output("</table>\n")
+            output("<br>")
+            if room_to_display.room_text != "":
+                output(get_htmlized_text(2, room_to_display.room_text, ""))
+            output("<br>")
+        output_card()
+        if mode == "play":
+            output("<br><br>")
+            output_map()
+            output("<br><br>")
+        if mode == "play" and is_in_normal_use(identifier):
+            output("<h1 align=\"center\"><em>Your Move:</em></h1>")
+            output_room_navigation(identifier, mode)
+            output("<br>")
+            output_centered_paragraph(0, "<input type=\"image\" " + \
+              "name=\"more_options\" value=\"more_options\" border=\"0\" " + \
+              "alt=\"More Options\" src=\"" + \
+              convert_to_url("more_options.gif") + "\">")
+        if test_flag(find_room(identifier).flags, "is_introduction"):
+            output("<input type=\"hidden\" name=\"mode\" " + \
+              "value=\"new_player\">")
+            output_submit_button()
+        if mode == "win":
+            output("<p align=\"center\"><a href=\"" + get_action_url() + \
+              "\"><img src=\"" + convert_to_url("play_again.gif") + \
+              "\" border=\"0\" alt=\"Play Again\"></a></p>")
+        elif mode == "edit":
+            output("<input type=\"hidden\" name=\"room\" value=\"" + \
+              identifier + "\">")
+            output_paragraph(1, "<input type=\"radio\" name=\"mode\" " + \
+              "value=\"edit_room\" checked> Return to editing this " + \
+              "room.<br>\n")
+            output_submit_button()
+        elif mode == "quit":
+            output("<p align=\"center\"><a href=\"" + get_action_url() + \
+              "\"><img src=\"" + convert_to_url("play_again.gif") + \
+              "\" border=\"0\" alt=\"Play Again\"></a></p>")
+    else:
+        output_error("I'm supposed to let you see a room, but I can't " + \
+        "find the room you selected.")
+
+def output_edit_introduction():
+    """Output what the player sees when trying to log in to edit."""
+    if is_true(get_config_value("edit_is_enabled", "no")):
+        output("<input type=\"hidden\" name=\"mode\" value=\"edit\">")
+        output_header(2, 1, "Please supply the editing password:")
+        output_paragraph(1, "<input type=\"password\" name=\"password\">")
+        output_submit_button()
+    else:
+        output_paragraph(1, "I'm sorry, but editing this program's data " + \
+          "is not presently turned on. If you would like to edit the " + \
+          "files, edit the configuration file at <tt>" + \
+          get_config_filename() + "</tt> and set the value of " + \
+          "<tt>edit_is_enabled</tt> to <tt>yes</tt> (all lowercase, no " + \
+          "quotes). Be sure the password is set to something different " + \
+          "from what the program came with.")
+        output_paragraph(1, "Please make those changes and hit your " + \
+          "browser's 'Reload' button. You should then be able to safely " + \
+          "edit this script's data.")
+
+def output_edit_room(identifier):
+    """Display the edit menu for a given room."""
+    room_to_edit = find_room(identifier)
+    if room_to_edit is not None:
+        output("<input type=\"hidden\" name=\"room\" value=\"" + \
+          str(identifier) + "\">\n")
+        output("<input type=\"hidden\" name=\"change_made\"" + \
+          "value=\"edit_room\">\n")
+        output_header(1, 0, "Edit Place.")
+        output_header(2, 1, "Name of place:")
+        output_text_input(2, "name", room_to_edit.name)
+        output_header(2, 1, "Relative URL for image (leave empty for no image):")
+        output_text_input(2, "image_url", room_to_edit.image_url)
+        output_header(2, 1, "Width of image in pixels (if known):")
+        output_text_input(2, "image_width", room_to_edit.image_width)
+        output_header(2, 1, "Height of image in pixels (if known):")
+        output_text_input(2, "image_height", room_to_edit.image_height)
+        output_header(2, 1, "Fixed text for this room:")
+        output_paragraph(2, "This text will appear below the image (if " + \
+          "any) and above the card for a given room.")
+        output_textarea(2, 10, "room_text", room_to_edit.room_text)
+        output_header(2, 1, "Cards for this room:")
+        output_paragraph(2, "To remove a card, delete all of its text.")
+        if len(room_to_edit.cards) > 0:
+            i = 0
+            for current_card in room_to_edit.cards:
+                output_textarea(2, 3, str(i), current_card)
+                i += 1
+        else:
+            output_paragraph(2, "<em>There are no cards in this room yet.</em>")
+        output_header(2, 1, "Add a new card (if desired):")
+        output_textarea(2, 5, "new_card", "")
+        output_header(2, 1, "Is this room the introduction?")
+        output_paragraph(2, "One room is designated the introduction, " + \
+          "where players start. This value should be checked for one and " + \
+          "only one room.")
+        output_checkbox(2, test_flag(room_to_edit.flags, "is_introduction"), \
+          "is_introduction", "Yes, this is the introduction.")
+        output_header(2, 1, "Is this room the ending?")
+        output_paragraph(2, "One room is designated the ending. This value " + \
+          "should be checked for one and only one room.")
+        output_checkbox(2, test_flag(room_to_edit.flags, "is_ending"), \
+          "is_ending", "Yes, this is the end room.")
+        output_header(2, 1, "Is this room displayed when a player quits?")
+        output_paragraph(2, "One room is reserved to when a player quits. " + \
+          "This value should be checked for one and only one room.")
+        output_checkbox(2, test_flag(room_to_edit.flags, "is_quit"), \
+          "is_quit", "Yes, this is the quitter's room.")
+        output_header(2, 1, "Should this room be hidden?")
+        output_paragraph(2, "You may make a room hidden, if you like. A " + \
+          "hidden room may be edited, but will not be displayed or put on " + \
+          "the map in normal play. This is useful if you want to work on " + \
+          "a room a bit before it is available to players.")
+        output_checkbox(2, test_flag(room_to_edit.flags, "is_hidden"), \
+          "is_hidden", "Yes, this room should be hidden.")
+        output_header(2, 1, "What next?")
+        output_paragraph(1, "<input type=\"radio\" name=\"mode\" " + \
+          "value=\"edit_room\" checked> Continue editing this room.<br>\n" + \
+          "<input type=\"radio\" name=\"mode\" value=\"view_edited_room\"> " + \
+          "Visit this room.<br>\n" + \
+          "<input type=\"radio\" name=\"mode\" value=\"edit\"> " + \
+          "Return to the editing menu.")
+        output_paragraph(1, "<input type=\"radio\" name=\"mode\" " + \
+          "value=\"delete_room\"> DELETE this room.<br>\n")
+        output_submit_button()
+    else:
+        output_error("I'm supposed to let you edit a room, but I can't " + \
+        "find the room you selected.")
+
+def output_error(message):
+    """Output an error message when something has gone wrong."""
+    output("<h2>An error has occurred...</h2>\n")
+    output("<p>" + message + " (Sorry!)</p>\n")
+
+def output_form_beginning():
+    """Output the beginning of the main HTML form."""
+    output("<form method=\"" + get_action_method() + "\" action=\"" + \
+      get_action_url() + "\">\n")
+    if cgi_form.has_key("password"):
+        if cgi_form["password"].value == get_password():
+            output("<input type=\"hidden\" name=\"password\" value=\"" + \
+              cgi_form["password"].value + "\">\n")
+
+def output_form_end():
+    """Output the end of the main HTML form."""
+    output("</form>\n")
+
+def output_game_quit():
+    """Give appropriate output after the players have quit a game."""
+    if find_quit_room() != None:
+        mutable_master.current_card = ""
+        output_display_room(find_quit_room().identifier, \
+          "quit")
+    else:
+        output_paragraph(1, "Thank you for playing this game. I " + \
+          "hope you've enjoyed it; please play again sometime!")
+        output_paragraph(1, "<a href=\"http://JonathansCorner.com\" " + \
+          "target=\"_blank\">Jonathan Hayward</a>")
+        output("<p align=\"center\"><a href=\"" + get_action_url() + \
+          "\"><img src=\"" + convert_to_url("play_again.gif") + \
+          "\" border=\"0\" alt=\"Play Again\"></a></p>")
+
+def output_header(header_level, indent_level, text):
+    """Output an HTML header of a given HTML level, indentation level, and
+    text."""
+    output("<h" + str(header_level) + " style=\"margin-left: " + \
+      get_indent_value(indent_level) + "; margin-right: " + \
+      get_indent_value(indent_level) + "\">" + text + "</h" + \
+      str(header_level) + ">\n")
+
+def output_main_body():
+    """Output the main contents of the body of the page, exclusive of header,
+    footer, and form beginning and ending."""
+    global new_room_identifier
+    if cgi_form.has_key("edit"):
+        output_edit_introduction()
+    elif get_cgi("change_made") == "end_game":
+        output_game_quit()
+    elif cgi_form.has_key("mode"):
+        mode = cgi_form["mode"].value
+        if authenticate(mode):
+            if mode == "create_new_room":
+                output_edit_room(new_room_identifier)
+            elif mode == "edit" or mode == "delete_room":
+                output_header(1, 0, "Editing Options")
+                output_paragraph(1, "<input type=\"radio\" name=\"mode\" " + \
+                  "value=\"create_new_room\" checked> " + \
+                  "Create a new room.")
+                if len(immutable_master.rooms) > 0:
+                    output_paragraph(1,  "<input type=\"radio\" name=\"mode\" " + \
+                      "value=\"edit_room\"> Edit an existing room:")
+                    output("<p style=\"margin-left: " + get_indent_value(2) + \
+                      "; margin-right: " + get_indent_value(2) + "\">")
+                    immutable_master.rooms.sort( lambda x, y: \
+                      cmp(x.name.lower(), y.name.lower()))
+                    for current_room in immutable_master.rooms:
+                        postfix = ""
+                        if test_flag(current_room.flags, "is_hidden"):
+                            postfix = postfix + " &nbsp; (Currently hidden)"
+                        if test_flag(current_room.flags, "is_quit"):
+                            postfix = postfix + " &nbsp; (Displayed on quit)"
+                        if test_flag(current_room.flags, "is_ending"):
+                            postfix = postfix + " &nbsp; (Ending)"
+                        if test_flag(current_room.flags, "is_introduction"):
+                            postfix = postfix + " &nbsp; (Introduction)"
+                        output("<input type=\"radio\" name=\"room\" " + \
+                          "value=\"" + current_room.identifier + "\"> " + \
+                          current_room.name + postfix + "<br>\n")
+                    output("<br></p>")
+                output_submit_button()
+            elif mode == "edit_room":
+                if cgi_form.has_key("room"):
+                    output_edit_room(cgi_form["room"].value)
+                else:
+                    output_error("I'm supposed to let you edit a room, " + \
+                      "but I don't know which room to let you edit!")
+            elif mode == "new_player":
+                if get_cgi("last_player") == "last_player":
+                    mutable_master.current_player = mutable_master.players[0]
+                    place_furball_and_players()
+                    update_current_card()
+                    output_play()
+                else:
+                    output_new_player()
+            elif mode == "play":
+                if not game_won:
+                    if get_cgi("more_options") == "more_options":
+                        output_additional_options()
+                    else:
+                        output_play()
+            elif mode == "view_edited_room":
+                if cgi_form.has_key("room"):
+                    output_display_room(cgi_form["room"].value, "edit")
+                else:
+                    output_error("I'm supposed to let you see a room, " + \
+                      "but I don't know which room to let you edit!")
+        else:
+            authentication_failed()
+    else:
+        remove_mutable_data()
+        mutable_master.current_card = ""
+        output_default()
+
+def output_map():
+    """Output a visible map so the players can visualize the board."""
+    highest_x_coordinate = 0
+    highest_y_coordinate = 0
+    lowest_x_coordinate = 0
+    lowest_y_coordinate = 0
+    for current_room_wrapper in mutable_master.room_wrappers:
+        if is_in_normal_use(current_room_wrapper.room_identifier):
+            if current_room_wrapper.x_coordinate > highest_x_coordinate:
+                highest_x_coordinate = current_room_wrapper.x_coordinate
+            if current_room_wrapper.y_coordinate > highest_y_coordinate:
+                highest_y_coordinate = current_room_wrapper.y_coordinate
+            if current_room_wrapper.x_coordinate < lowest_x_coordinate:
+                lowest_x_coordinate = current_room_wrapper.x_coordinate
+            if current_room_wrapper.y_coordinate < lowest_y_coordinate:
+                lowest_y_coordinate = current_room_wrapper.y_coordinate
+    output("<table align=\"center\" border=\"0\"" + \
+      "cellpadding=\"0\" cellspacing=\"0\">")
+    output("<tr><td class=\"map_border\">")
+    output("<table width=\"100%\" border=\"0\" cellspacing=\"" + \
+      get_border_width() + "\" " + \
+      "cellpadding=\"15\">")
+    current_y_coordinate = highest_y_coordinate + 1
+    while current_y_coordinate >= lowest_y_coordinate - 1:
+        output("<tr>")
+        current_x_coordinate = lowest_x_coordinate - 1
+        while current_x_coordinate <= highest_x_coordinate + 1:
+            if mutable_master.current_player.room_wrapper.x_coordinate == \
+              current_x_coordinate and \
+              mutable_master.current_player.room_wrapper.y_coordinate == \
+              current_y_coordinate:
+                body_text = ""
+                if mutable_master.furball.room_wrapper.x_coordinate == \
+                  current_x_coordinate and\
+                  mutable_master.furball.room_wrapper.y_coordinate == \
+                  current_y_coordinate:
+                    if body_text != "":
+                        body_text += "<br>"
+                    body_text += "<strong>" + get_creature_name() + "</strong>"
+                player_list = players_in(find_room_wrapper_at(current_x_coordinate, \
+                  current_y_coordinate))
+                if player_list != []:
+                    for current_player in player_list:
+                        if current_player == mutable_master.current_player:
+                            if body_text != "":
+                                body_text += "<br>"
+                            body_text += "<strong>" + current_player.name + \
+                              "</strong>"
+                        else:
+                            if body_text != "":
+                                body_text += "<br>"
+                            body_text += current_player.name
+                output("<td class=\"map_current_room\" height=\"" + \
+                  get_map_cell_height() + "\" " + \
+                  "width=\"" + get_map_cell_width() + "\">" + \
+                  body_text + "&nbsp;</td>")
+            elif find_room_wrapper_at(current_x_coordinate,\
+              current_y_coordinate) != None:
+                body_text = ""
+                if mutable_master.furball.room_wrapper.x_coordinate == \
+                  current_x_coordinate and\
+                  mutable_master.furball.room_wrapper.y_coordinate == \
+                  current_y_coordinate:
+                    if body_text != "":
+                        body_text += "<br>"
+                    body_text += "<strong>" + get_creature_name() + "</strong>"
+                player_list = players_in(find_room_wrapper_at(current_x_coordinate, \
+                  current_y_coordinate))
+                if player_list != []:
+                    for current_player in player_list:
+                        if current_player == mutable_master.current_player:
+                            if body_text != "":
+                                body_text += "<br>"
+                            body_text += "<strong>" + current_player.name + \
+                              "</strong>"
+                        else:
+                            if body_text != "":
+                                body_text += "<br>"
+                            body_text += current_player.name
+                output("<td class=\"map_available_room\" height=\"" + \
+                  get_map_cell_height() + "\" " + \
+                  "width=\"" + get_map_cell_width() + "\">" + \
+                  body_text + "&nbsp;</td>")
+            else:
+                output("<td class=\"map_empty_cell\" height=\"" + \
+                  get_map_cell_height() + "\" " + "width=\"" + \
+                  get_map_cell_width() + "\">&nbsp;</td>")
+            current_x_coordinate += 1
+        output("</tr>")
+        current_y_coordinate -= 1
+    output("</table>")
+    output("</td></tr>")
+    output("</table>\n")
+
+def output_new_player():
+    """Output the form to create a new player."""
+    output("<input type=\"hidden\" name=\"mode\" value=\"new_player\">")
+    output("<input type=\"hidden\" name=\"change_made\" value=\"new_player\">")
+    if get_cgi("player_name") != "":
+        output_header(2, 1, "Add a new player. (" + get_cgi("player_name") + \
+          " has been added.)")
+    else:
+        output_header(2, 1, "Add a new player.")
+    output_header(3, 1, "Name or Nickname:")
+    output_text_input(1, "player_name", "")
+    output_checkbox(1, 0, "last_player", \
+      "This is the last player. On to the game!<br>")
+    output_submit_button()
+    output_centered_paragraph(0, "(Children under 13 need their parents' " + \
+      "permission to play due to the Children's Online Privacy Protection " + \
+      "Act. Here's the <a href=\"" + \
+      convert_to_url("privacy.html") + "\" target=\"blank\">privacy " + \
+      "policy</a>.)")
+
+def output_paragraph(indent_level, text):
+    """Output a paragraph of a given indentation level and text."""
+    output("<p style=\"margin-left: " + get_indent_value(indent_level) + \
+      "; margin-right: " + get_indent_value(indent_level) + "\">" + text + \
+      "</p>\n")
+
+def output_play():
+    output_display_room(mutable_master.current_player.room_wrapper.identifier, \
+      "play")
+    
+def output_room_navigation(identifier, mode):
+    output("<table align=\"center\" border=\"0\" cellpadding=\"0\" " + \
+      "cellspacing=\"0\">")
+    output("<tr><td></td>")
+    if (has_neighbor(identifier, "North", mode)):
+        output("<td><input type=\"image\" name=\"move\" value=\"North\" " + \
+          "alt=\"North\" border=\"0\" src=\"" + convert_to_url("north.gif") + \
+          "\"></td>")
+    else:
+        output("<td><img border=\"0\" src=\"" + \
+          convert_to_url("north_shadow.gif") + "\"></td>")
+    output("<td></td></tr>")
+    output("<tr>")
+    if (has_neighbor(identifier, "West", mode)):
+        output("<td><input type=\"image\" name=\"move\" value=\"West\" " + \
+          "alt=\"West\" border=\"0\" src=\"" + convert_to_url("west.gif") + \
+          "\"></td>")
+    else:
+        output("<td><img border=\"0\" src=\"" + \
+          convert_to_url("west_shadow.gif") + "\"></td>")
+    if (has_neighbor(identifier, "Stay", mode)):
+        output("<td><input type=\"image\" name=\"move\" value=\"Stay\" " + \
+          "alt=\"Stay Here\" border=\"0\" src=\"" + \
+          convert_to_url("stay.gif") + "\"></td>")
+    else:
+        output("<td><img border=\"0\" src=\"" + \
+          convert_to_url("stay_shadow.gif") + "\"></td>")
+    if (has_neighbor(identifier, "East", mode)):
+        output("<td><input type=\"image\" name=\"move\" value=\"East\" " + \
+          "alt=\"East\" border=\"0\" src=\"" + convert_to_url("east.gif") + \
+          "\"></td>")
+    else:
+        output("<td><img border=\"0\" src=\"" + \
+          convert_to_url("east_shadow.gif") + "\"></td>")
+    output("</tr>")
+    output("<tr><td></td>")
+    if (has_neighbor(identifier, "South", mode)):
+        output("<td><input type=\"image\" name=\"move\" value=\"South\" " + \
+          "alt=\"South\" border=\"0\" src=\"" + convert_to_url("south.gif") + \
+          "\"></td>")
+    else:
+        output("<td><img border=\"0\" src=\"" + \
+          convert_to_url("south_shadow.gif") + "\"></td>")
+    output("<td></td></tr>")
+    output("</table>\n")
+
+def output_ruler():
+    output("<hr width=\"50%\">\n")
+
+def output_submit_button():
+    output_centered_paragraph(0, "<input type=\"image\" name=\"Continue\" " + \
+      "value=\"Continue\" alt=\"Continue\" border=\"0\" src=\"" + \
+      convert_to_url("submit.gif") + "\">")
+
+def output_text_input(indentation_level, name, value):
+    """Output an HTML input of type text at a given indentation level and of a
+    given name."""
+    output("<p style=\"margin-left: " + get_indent_value(indentation_level) + \
+      "; margin-right: " + get_indent_value(indentation_level) + \
+      "\"><input type=\"text\" name=\"" + name + "\" size=\"" + \
+      get_text_width() + "\" value = \"" + value + "\"></p>\n")
+
+def output_textarea(indentation_level, height, name, value):
+    """Output an HTML textarea at a given level and of a given name and initial
+    value."""
+    output("<p style=\"margin-left: " + get_indent_value(indentation_level) + \
+      "; margin-right: " + get_indent_value(indentation_level) + \
+      "\"><textarea name=\"" + name + "\" rows=\"" + str(height) + \
+      "\" cols=\"" + get_text_width() + "\">" + \
+      cgi.escape(value) + "</textarea></p>\n")
+
+def place_furball_and_players():
+    mutable_master.furball.room_wrapper = find_available_room_wrapper()
+    for current_player in mutable_master.players:
+        current_player.room_wrapper = find_available_room_wrapper()
+
+def players_in(room_wrapper_in_question):
+    result = []
+    for current_player in mutable_master.players:
+        if current_player.room_wrapper == room_wrapper_in_question:
+            result.append(current_player)
+    if result != []:
+        result.sort(lambda x, y: cmp(x.name.lower(), y.name.lower()))
+    return result
+
+def process_changes():
+    """Make any changes to the program's data, before displaying the results.
+    This could include editing rooms, moving, ..."""
+    global immutable_master_may_have_changed, new_room_identifier
+    if get_cgi("mode") == "create_new_room":
+        new_room_identifier = room().identifier
+    elif get_cgi("mode") == "delete_room":
+        immutable_master_may_have_changed = 1
+        room_to_delete = find_room(get_cgi("room"))
+        try:
+            immutable_master.rooms.remove(room_to_delete)
+        except ValueError:
+            pass
+    elif get_cgi("mode") == "play":
+        if not(get_cgi("more_options") == "more_options" or \
+          get_cgi("no_process_move") == "no_process_move"):
+            process_move()
+    if get_cgi("change_made") != "":
+        immutable_master_may_have_changed = 1
+        change_made = get_cgi("change_made")
+        if change_made == "delete_player":
+            index_to_delete = -1
+            players_examined = 0
+            for current_player in mutable_master.players:
+                if current_player.identifier == get_cgi("player_to_delete"):
+                    index_to_delete = players_examined
+                    player_to_delete = current_player
+                players_examined += 1
+            if index_to_delete > -1:
+                if index_to_delete < mutable_master.current_player_index:
+                    mutable_master.current_player_index -= 1
+                mutable_master.players.remove(player_to_delete)
+                mutable_master.current_player = \
+                  mutable_master.players[mutable_master.current_player_index]
+                update_current_card()
+        elif change_made == "edit_room":
+            if get_cgi("room") != "":
+                room_to_edit = find_room(get_cgi("room"))
+                if room_to_edit != None:
+                    room_to_edit.name = get_cgi("name")
+                    room_to_edit.image_url = get_cgi("image_url")
+                    room_to_edit.image_width = get_cgi("image_width")
+                    room_to_edit.image_height = get_cgi("image_height")
+                    room_to_edit.room_text = get_cgi("room_text")
+                    room_to_edit.cards = []
+                    current_card = 0
+                    more_cards = 1
+                    while more_cards:
+                        if cgi_form.has_key(str(current_card)):
+                            if get_cgi(str(current_card)) != "":
+                                room_to_edit.cards.append(get_cgi(str \
+                                  (current_card)))
+                        else:
+                            more_cards = 0
+                        current_card += 1
+                    if get_cgi("new_card") != "":
+                        room_to_edit.cards.append(get_cgi("new_card"))
+                    if get_cgi("is_ending") == "is_ending":
+                        room_to_edit.flags = set_flag(\
+                          room_to_edit.flags, "is_ending")
+                    else:
+                        room_to_edit.flags = clear_flag(\
+                          room_to_edit.flags, "is_ending")
+                    if get_cgi("is_hidden") == "is_hidden":
+                        room_to_edit.flags = set_flag(\
+                          room_to_edit.flags, "is_hidden")
+                    else:
+                        room_to_edit.flags = clear_flag(\
+                          room_to_edit.flags, "is_hidden")
+                    if get_cgi("is_introduction") == "is_introduction":
+                        room_to_edit.flags = set_flag(\
+                          room_to_edit.flags, "is_introduction")
+                    else:
+                        room_to_edit.flags = clear_flag(\
+                          room_to_edit.flags, "is_introduction")
+                    if get_cgi("is_quit") == "is_quit":
+                        room_to_edit.flags = set_flag(\
+                          room_to_edit.flags, "is_quit")
+                    else:
+                        room_to_edit.flags = clear_flag(\
+                          room_to_edit.flags, "is_quit")
+        elif change_made == "end_game":
+            remove_mutable_data()
+        elif change_made == "new_player":
+            new_player = player()
+            new_player.name = get_cgi("player_name")
+            if mutable_master.furball != None:
+                if mutable_master.furball.room_wrapper != None:
+                    new_player.room_wrapper = find_available_room_wrapper()
+        elif change_made == "resume_play":
+            pass
+        else:
+            output_error("An unrecognized type of change has been" + \
+              "attempted.  Attempting to continue if nothing had happened...")
+
+def process_move():
+    global game_won
+    move = get_cgi("move")
+    if mutable_master.current_player is None:
+        return
+    else:
+        if move != "Stay":
+            old_room_wrapper = mutable_master.current_player.room_wrapper
+            if has_neighbor(mutable_master.current_player.room_wrapper.identifier, \
+              move, "play"):
+                mutable_master.current_player.room_wrapper = \
+                  mutable_master.current_player.room_wrapper.neighbors[move]
+            if players_in(mutable_master.furball.room_wrapper) != []:
+                room_wrappers_to_hide_in = []
+                for room_wrapper_direction in \
+                  mutable_master.furball.room_wrapper.neighbors.keys():
+                    if players_in(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction]) == [] \
+                      and mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction] != old_room_wrapper:
+                        room_wrappers_to_hide_in.append(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction])
+                if len(room_wrappers_to_hide_in) > 0:
+                    mutable_master.furball.room_wrapper = \
+                      room_wrappers_to_hide_in[random_range(len(room_wrappers_to_hide_in))]
+                else:
+                    game_won = 1
+                    mutable_master.current_card = ""
+                    try:
+                        output_display_room(find_ending_room().identifier, \
+                          "win")
+                    except AttributeError:
+                        output_centered_paragraph(1, "You've won the game!")
+                        output("<p align=\"center\"><a href=\"" + \
+                          get_action_url() + "\"><img src=\"" + \
+                          convert_to_url("play_again.gif") + \
+                          "\" border=\"0\" alt=\"Play Again\"></a></p>")
+                    remove_mutable_data()
+        next_players_turn()
+
+def random_range(range):
+    """Return a random number from 0 to range - 1."""
+    return int(random.random() * range)
+
+def read_file(name):
+    """Read the contents of a file and return it as a string."""
+    file = open(get_absolute_path(name), 'r')
+    result = file.read()
+    file.close()
+    return result
+
+def remove_mutable_data():
+    global mutable_data_has_been_deleted
+    try:
+        open(get_pickled_data_filename("mutable"), "a").close()
+    except IOError:
+        pass
+    os.remove(get_pickled_data_filename("mutable"))
+    mutable_data_has_been_deleted = 1
+
+def save_data():
+    """Save data so it will be available for future visits."""
+    if immutable_master_may_have_changed:
+        file = open(get_pickled_data_filename("immutable") + "." + \
+          get_visitors_ip(), "w")
+        cPickle.dump(immutable_master, file)
+        file.close()
+        os.rename(get_pickled_data_filename("immutable") + "." + \
+          get_visitors_ip(), get_pickled_data_filename("immutable"))
+    if not mutable_data_has_been_deleted:
+        file = open(get_pickled_data_filename("mutable") + "." + \
+          get_visitors_ip(), "w")
+        cPickle.dump(mutable_master, file)
+        file.close()
+        os.rename(get_pickled_data_filename("mutable") + "." + \
+          get_visitors_ip(), get_pickled_data_filename("mutable"))
+
+def set_flag(current_value, flag):
+    """Set a flag in a given text. Returns a string with the flag set."""
+    if (test_flag(current_value, flag)):
+        return current_value
+    else:
+        result = current_value + " " + flag
+        return compress_spaces(result)
+
+def should_dig_random_tunnel():
+    if random.random() <\
+      float(get_config_value("chance_of_tunnel_between_adjacent_rooms", \
+      "1.0")):
+          return 1
+    else:
+        return 0
+
+def test_flag(current_value, flag):
+    """Test for a flag being true in a given context. Returns 1 if the flag is
+    true, 0 if it's false."""
+    if string.find(current_value, flag) != -1:
+        return 1
+    else:
+        return 0
+
+def update_current_card():
+    if mutable_master.current_player.room_wrapper != None:
+        room_to_display = \
+          find_room(mutable_master.current_player.room_wrapper.room_identifier)
+        if len(room_to_display.cards) > 0:
+            mutable_master.current_card = room_to_display.cards[\
+              random_range(len(room_to_display.cards))]
+        else:
+            mutable_master.current_card = ""
+    else:
+        mutable_master.current_card = ""
+
+# Main body
+
+if __name__ == "__main__":
+    # The following two lines must precede any creation of classes defined in
+    # this script.
+    immutable_master = None
+    immutable_master = immutable_serializer_linker()
+    immutable_master_may_have_changed = 0
+    mutable_master = None
+    mutable_master = mutable_serializer_linker()
+    init()
+    cgi_form = cgi.FieldStorage()
+    cgi_header = read_file("cgi_header")
+    page_header = read_file("page_header")
+    page_footer = read_file("page_footer")
+    output(cgi_header)
+    output("\n")
+    output(page_header)
+    process_changes()
+    output_form_beginning()
+    output_main_body()
+    output_form_end()
+    output(page_footer)
+    save_data()

@@ -1,0 +1,332 @@
+#!/usr/bin/python
+"""Install script for Catch the Furball ( homepage at
+http://jonathanscorner.com/etc/furball/ ). This script runs in a text window
+rather than a popup wizard."""
+
+import os, string, sys
+
+def add_trailing_slash(path):
+    """If a pathname (for a directory) lacks a trailing slash, add one."""
+    if len(path) > 0:
+        if path[len(path) - 1] == "/":
+            return path
+        else:
+            return path + "/"
+    else:
+        return path + "/"
+
+def begins_with_tilde(path):
+    """Determine if a pathname begins with a tilde."""
+    if path[0] == "~":
+        return 1
+    else:
+        return 0
+
+def get_value(default):
+    """In an install question, tell what the default answer will be, and read
+    user input. Return the default if the user just hits the enter key, or the
+    user response if the user types anything different."""
+    output(" [" + default + "]: ")
+    response = read_chomped_line()
+    if response == "":
+        return default
+    else:
+        return response
+
+def init():
+    """Perform all necessary initializations, including outputting initial
+    instructions to the user."""
+    global action_url
+    global cgi_executable_path
+    global document_url
+    global documentation_path
+    global full_python_path
+    global html_root_directory
+    global private_data_directory
+    action_url = "/cgi-bin/furball"
+    cgi_executable_path = "/var/www/cgi-bin/furball"
+    document_url = "/furball/"
+    documentation_path = "/usr/doc/furball/"
+    full_python_path = "/usr/bin/python"
+    html_root_directory = "/var/www/html/furball/"
+    private_data_directory = "/usr/share/furball/"
+    output(\
+"""
+You are beginning the Catch the Furball INSTALL script. This script will ask you
+a few questions in order to help customize the script and place associated
+files in the right places. If you don't know an appropriate answer to one of
+the questions, and don't want to use this script's guess, you can quit at any
+time and restart the script when you know how to answer the questions. The
+script will ask you all informational questions before making any changes.
+
+Questions asked are typical of a traditional Unix/Linux interactive
+installation script. The installer is encouraged to have at least two windows
+open during installation: one for this script, and one to poke around on the
+system and find appropriate answers to script questions. The default answers
+are acceptable under RedHat Linux.
+
+(This script accepts the "~" and "~user" abbreviations for home directories. If
+you are giving part of a URL, please specify "~user/" instead of "~/".)
+
+Hit return to continue: """)
+    read_chomped_line()
+
+def install():
+    """Install materials to the secified locations and perform necessary
+    setup."""
+    global action_url
+    global cgi_executable_path
+    global document_url
+    global documentation_path
+    global full_python_path
+    global html_root_directory
+    global private_data_directory
+    #Canonicalize answers.
+    output("\nInstalling...")
+    os.system("rm -rf " + private_data_directory)
+    os.system("mkdir -p " + private_data_directory)
+    os.system("rm -rf " + private_data_directory)
+    os.system("cp -r data " + private_data_directory)
+    os.system("chmod 644 " + private_data_directory + "/*")
+    os.system("chmod 733 " + private_data_directory + "/pickled")
+    os.system("chmod 777 " + private_data_directory + "/pickled/*")
+    os.system("chmod 711 " + private_data_directory)
+    os.system("rm -rf " + html_root_directory)
+    os.system("mkdir -p " + html_root_directory)
+    os.system("rm -rf " + html_root_directory)
+    os.system("cp -r htdocs " + html_root_directory)
+    os.system("chmod 755 " + html_root_directory)
+    os.system("chmod 644 " + html_root_directory + "/*")
+    substitute(html_root_directory + "/index.html", "ACTION_URL", action_url)
+    substitute(private_data_directory + "/config", "ACTION_URL", action_url)
+    substitute(private_data_directory + "/config", "DATA_ROOT", \
+      private_data_directory)
+    substitute(private_data_directory + "/config", "DOCUMENT_URL", \
+      document_url)
+    os.system("rm -rf " + cgi_executable_path)
+    os.system("mkdir -p " + cgi_executable_path)
+    os.system("rm -rf " + cgi_executable_path)
+    os.system("cp furball " + cgi_executable_path)
+    substitute(cgi_executable_path, "FULL_PYTHON_PATH", full_python_path)
+    substitute(cgi_executable_path, "CONFIG_FILENAME", \
+      private_data_directory + "/config")
+    substitute(cgi_executable_path, "DATA_ROOT", private_data_directory + "/")
+    os.system("chmod 0755 " + cgi_executable_path)
+    substitute("README", "<the private Catch the Furball data directory>", \
+      private_data_directory)
+    substitute("README", "<the public Catch the Furball HTML directory>", \
+      html_root_directory)
+    os.system("mkdir -p " + documentation_path)
+    os.system("rm -rf " + documentation_path)
+    os.system("mkdir -p " + documentation_path)
+    os.system("cp license.txt " + documentation_path)
+    os.system("cp README " + documentation_path)
+    os.system("cp thanks " + documentation_path)
+    output(\
+"""
+
+Installation is complete. Further information about Catch the Furball is\
+available in the README file. If you'd like to know how to customize the
+Catch the Furball engine to make your own game, please read it.
+
+Thank you for using Catch the Furball!
+
+""")
+
+def interview():
+    """Interview the player for information needed to complete the install."""
+    global action_url
+    global cgi_executable_path
+    global document_url
+    global documentation_path
+    global full_python_path
+    global html_root_directory
+    global private_data_directory
+    output(\
+"""
+What is the URL Catch the Furball will be published at, exclusive of hostname?
+This should be something like "/cgi-bin/furball" or "/~user/furball.cgi". (All
+examples given should be typed without quotes).
+
+Catch the Furball URL""")
+    action_url = get_value(action_url)
+    output(\
+"""
+What physical path on your system should the Catch the Furball script be
+stored at on your system in order to be accessible from that URL? This should
+be something like "/var/www/cgi-bin/furball" or
+"~/public_html/furball.cgi".
+
+Catch the Furball executable path""")
+    cgi_executable_path = get_value(cgi_executable_path)
+    output(\
+"""
+What is the path on the system that Catch the Furball documentation should be
+stored at? This should be something like "/usr/doc/furball" or
+"~/doc/furball".
+
+Documentation path""")
+    documentation_path = get_value(documentation_path)
+    output(\
+"""
+What is the URL Catch the Furball documents (images, etc.) will be available
+from? This should be something like "/furball/" or "/~user/furball/".
+
+Document URL""")
+    document_url = get_value(document_url)
+    output(\
+"""
+What is the full path to python? This should be something like
+"/usr/bin/python".
+
+Full python path""")
+    full_python_path = get_value(full_python_path)
+    output(\
+"""
+What is the full system path to the directory documents should be stored in
+so as to be available at the URL you specified for the document URL? This
+should be something like "/var/www/html/furball/" or
+"~/public_html/furball/".  
+** Warning: If you have anything at this location before Catch the Furball is
+** installed, it will be deleted.
+
+HTML root directory""")
+    html_root_directory = get_value(html_root_directory)
+    output(\
+"""
+What is the directory that private data should be stored in? This should be
+something like "/usr/share/furball/" or "~/furball/".
+
+** Warning: If you have anything at this location before Catch the Furball is
+** installed, it will be deleted.
+
+Private data directory""")
+    private_data_directory = get_value(private_data_directory)
+    output(\
+"""
+You have selected the following options:
+
+    Catch the Furball URL: """ + action_url + """
+    Catch the Furball executable path: """ + cgi_executable_path + """
+    Documentation path: """ + documentation_path + """
+    Document URL: """ + document_url + """
+    Full Python path: """ + full_python_path + """
+    HTML root directory: """ + html_root_directory + """
+    Private data directory: """ + private_data_directory + """
+
+Are all these options correct (yes/no)""")
+    if is_true(get_value("yes")):
+        return 1
+    else:
+        output(\
+"""
+Would you rather change your answers or quit for now (change/quit)""")
+        response = get_value("change")
+        if response.lower()[0] == "c":
+            output(\
+"""
+I'll ask you the same questions again. If you want to keep your answer the
+same, just hit enter.
+""")
+            return interview()
+        else:
+            output(\
+"""
+Bye! You can always install Catch the Furball at a later time.
+""")
+            sys.exit(0)
+
+def is_true(option_value):
+    """Test whether a supplied string should be interpreted as true. This will
+    happen if the value, converted to lowercase, is "true", "yes", "on", or
+    "1"."""
+    if option_value.lower() == "true":
+        return 1
+    elif option_value.lower() == "yes":
+        return 1
+    elif option_value.lower() == "on":
+        return 1
+    elif option_value.lower() == "1":
+        return 1
+    else:
+        return 0
+
+def output(text):
+    """Output a given piece of text. This does not append a newline."""
+    sys.stdout.write(text)
+
+def prefix_tilde_with_slash(path):
+    """If a specifed path begins with a tilde, place a slash before that
+    tilde."""
+    if begins_with_tilde(path):
+        return "/" + path
+    else:
+        return path
+
+def read_chomped_line():
+    """Read a line from standard input, minus an ending linefeed or carriage
+    return-linefeed pair."""
+    current_character = ""
+    result = ""
+    while current_character != "\n":
+        result += current_character
+        current_character = sys.stdin.read(1)
+        if current_character == "\r":
+            current_character = sys.stdin.read(1)
+    return result
+
+def remove_trailing_slash(path):
+    """If a specified path ends in a trailing slash, remove it."""
+    if len(path) > 0:
+        if path[len(path) - 1] == "/":
+            return path[0:-1]
+        else:
+            return path
+    else:
+        return path
+
+def standardize_responses():
+    """Take user responses and standardize them in terms of appropriately
+    adding/removing a trailing slash, expanding tildes, etc."""
+    global action_url
+    global cgi_executable_path
+    global document_url
+    global documentation_path
+    global full_python_path
+    global html_root_directory
+    global private_data_directory
+    action_url = remove_trailing_slash(action_url)
+    action_url = prefix_tilde_with_slash(action_url)
+    cgi_executable_path = os.path.expanduser(cgi_executable_path)
+    cgi_executable_path = remove_trailing_slash(cgi_executable_path)
+    documentation_path = os.path.expanduser(documentation_path)
+    documentation_path = remove_trailing_slash(documentation_path)
+    document_url = remove_trailing_slash(document_url)
+    full_python_path = os.path.expanduser(full_python_path)
+    full_python_path = remove_trailing_slash(full_python_path)
+    html_root_directory = remove_trailing_slash(html_root_directory)
+    html_root_directory = os.path.expanduser(html_root_directory)
+    private_data_directory = remove_trailing_slash(private_data_directory)
+    private_data_directory = os.path.expanduser(private_data_directory)
+
+def substitute(filename, key, value):
+    """Substitute, in the file of specified filename, all instances of a given
+    key with the specified value."""
+    try:
+        unmodified_file = open(filename, "r")
+        initial_text = unmodified_file.read()
+        unmodified_file.close()
+        modified_text = string.replace(initial_text, key, value)
+        modified_file = open(filename, "w")
+        modified_file.write(modified_text)
+        modified_file.close()
+    except IOError:
+        output("Could not substitute \"" + value + "\" for \"" + key + \
+          "\" in file \"" + filename + "\".\nExiting... (Sorry!)\n")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    init()
+    interview()
+    standardize_responses()
+    install()

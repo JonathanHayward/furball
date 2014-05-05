@@ -1,0 +1,931 @@
+(i__main__
+immutable_serializer_linker
+p1
+(dp2
+S'identifier'
+p3
+S'immutable_1'
+p4
+sS'highest_identifier'
+p5
+I42
+sS'rooms'
+p6
+(lp7
+(i__main__
+room
+(dp8
+S'room_text'
+p9
+S''
+sS'image_height'
+p10
+S'480'
+p11
+sS'image_url'
+p12
+S'bridge.jpg'
+sS'name'
+p13
+S'Bridge'
+p14
+sS'cards'
+p15
+(lp16
+S'Think of a discipline in the sciences. Think of a discipline in the humanities. In what ways can you connect them?'
+aS'How have people reached out to you?'
+aS'What of your own culture have you understood from other cultures?'
+aS'In what ways does being both spirit and matter leave you richer than if you were only matter or only spirit? How are spirit and matter united in man?'
+aS'What can you do to meet other people, and connect their realms with yours?'
+aS'How does your work relate to your leisure?'
+aS'How does are connect with life?'
+aS'Draw a comparison between a watch and a leaf.'
+aS'When did you last perceive a hidden analogy?'
+aS'Think of a metaphor that struck you as insightful. Describe what about it was insightful.'
+aS'How is the present similar to the past?'
+aS'Can the gap between people be bridged?'
+aS'Can the gap between men and women be bridged?'
+aS'Can the gap between adults and children be bridged?'
+asS'flags'
+p17
+S' '
+sg3
+S'immutable_6'
+p18
+sS'image_width'
+p19
+S'640'
+p20
+sba(i__main__
+room
+(dp21
+g9
+S'What is a cemetery? The home of zombies and the haunt of ghosts? In some movies, perhaps, but many people have had a very different understanding of a cemetery.\r\n\r\nMany people have understood the cemetery to be a point of continuity between the present and the past. That indeed would often go to the cemetery for a picture on Sunday: there was nothing ghoulish about it. The departed were still present to them.\r\n\r\nHow is the past present to you?'
+sg10
+g11
+sg12
+S'cemetery.jpg'
+sg13
+S'Cemetery'
+p22
+sg15
+(lp23
+S'"Treat this tradition gently. It is not left over from your parents; it was borrowed from the generations that will follow you, and if you destroy it, you will sever a link between the future and its roots."\r\n\r\nIn what ways are you preserving tradition?'
+aS'"Treat this tradition gently. It is not left over from your parents; it was borrowed from the generations that will follow you, and if you destroy it, you will sever a link between the future and its roots."\r\n\r\nIn what ways are you destroying tradition?'
+aS'What age in the past would you most like to have lived in?'
+aS'What historical figure would you most like to have known?'
+aS'What from the past is most precious to you?'
+aS'What mistakes in the past have you learned from?'
+aS"It has been said that tradition is fundamentally democratic, because it affords no special privelege to the few who happen to be walking around: <em>the term 'silent majority' originally meant the dead.</em>\r\n\r\nDo you agree?"
+aS'What do you most like to see in museums?'
+aS'What is your favorite old book?'
+aS'In two hundred years, what do you think people will say of us?'
+aS'What do you think are the silliest things about the past? The present?'
+aS'Pick a figure from the past: what do you think he would say after living with us for a year?'
+aS"You may have heard of revisionist historians. What do you think a revisionist futurian would be, and have you met any? <!-- The more common term would probably be 'liberal'. -->"
+asg17
+S''
+sg3
+S'immutable_12'
+p24
+sg19
+g20
+sba(i__main__
+room
+(dp25
+g9
+S'What if we regarded dreaming, instead of waking, as the aroused state? Is the world of dreams overlooked?'
+sg10
+g11
+sg12
+S'chamber_of_dreams.jpg'
+sg13
+S'Chamber of Dreams'
+sg15
+(lp26
+S'What did you dream of last night?'
+aS'Have you ever solved a problem by thinking about it in your dreams?'
+aS'What is the most intense dream you remember?'
+aS'Imagine you are visiting another realm in which colors and variety flow as in a dream. What is it like?'
+aS'Do you swim in your dreams? Do you fly?'
+aS'What languages have you dreamed in?'
+aS'What of the waking world is present in your dreams?'
+aS'What of your dreams are present in the waking world?'
+aS'What do dreams tell us about ourselves?'
+aS'Let images flow through your mind.'
+asg17
+S''
+sg3
+S'immutable_3'
+p27
+sg19
+g20
+sba(i__main__
+room
+(dp28
+g9
+S'This game is not self-contained. This room is not about things to do not, but things to do after the game has finished.'
+sg10
+g11
+sg12
+S'chamber_of_the_future.jpg'
+sg13
+S'Chamber of the Future'
+sg15
+(lp29
+S"Write a letter to a friend you haven't written to in a long time."
+aS'What have you done wrong and meant to apologize for, but not gotten around to making the apology? Apologize to that person.'
+aS'What delightful thing have you been wanting to do, but not done because you are busy? Do it.'
+aS"Try a restaurant you haven't been to before."
+aS'Spend an hour just listening to music.'
+aS'What do you know you should do, but keep telling yourself, "I will do it later?" Decide a specific time to do it, and do it.'
+aS'What would you like to learn? How would you like to grow? Act on it.'
+aS'The next day you work, try to cherish your work, and give it your full concentration.'
+aS'Who do you know that you respect? Tell him.'
+aS'What book have you wanted to read? Start reading it.'
+aS'Spend the rest of the day cherishing every thing of beauty that you see.'
+aS"Call a friend you haven't spoken with in a long time."
+aS"What do you do that you keep telling yourself you're going to stop? Stop it."
+asg17
+S''
+sg3
+S'immutable_4'
+p30
+sg19
+g20
+sba(i__main__
+room
+(dp31
+g9
+S''
+sg10
+g11
+sg12
+S'childs_playroom.jpg'
+sg13
+S"Child's Playroom"
+sg15
+(lp32
+S"What's your favorite color?"
+aS'What is your dream car?'
+aS'Close your eyes and feel the floor, the door, and the walls.'
+aS'What was the happiest day of your childhood?'
+aS"Squint and look around. Can you observe anything you wouldn't normally notice?"
+aS'In what ways do you still carry your childhood with you?'
+aS'In what ways do you no longer carry your childhood with you?'
+aS"Pick an object that's nearby. How would you describe it to someone who had never seen such a thing?"
+aS'Do a somersault / roly-poly.'
+aS"What is your favorite children's book?"
+aS'What was your funniest family outing as a child?'
+aS'What is your favorite childhood memory?'
+aS'Pat your head and rub your belly.'
+asg17
+S''
+sg3
+S'immutable_13'
+p33
+sg19
+g20
+sba(i__main__
+room
+(dp34
+g9
+S'A courtyard is a place that is in a way both inside and outside: a beauty is present that would not exist if it were indoors alone or outdoors alone. Why not think about ways in which the internal and external meet?'
+sg10
+g11
+sg12
+S'courtyard.jpg'
+sg13
+S'Courtyard'
+p35
+sg15
+(lp36
+S'How does your inner world meet the outer world?'
+aS'How is your inner world enriched by the outer world?'
+aS'How does your inner world enrich the outer world?'
+aS'How is your inner world unlike the outer world?'
+aS'What do you consider to be the relationship between belief and action?'
+aS'What outer events still make an impression in your heart?'
+aS'What dreams have you tried to make real?'
+aS'If you had to choose between inner and outer experience, which would you pick?'
+aS'Are you more of an internal or external person?'
+aS'When you try to make a memory, do you try to achieve this through internal or external circumstances?'
+aS'How does happiness relate to internal conditions? External conditions? Is it defined by one, by both, by something else? If you seek happiness, does the result depend on where you are seeking it? How?'
+aS'A wedding often involves such elaborate preparations that the bride gets sick from stress during the honeymoon. What would be a better way of creating a memory?'
+asg17
+S''
+sg3
+S'immutable_14'
+p37
+sg19
+g20
+sba(i__main__
+room
+(dp38
+g9
+S''
+sg10
+g11
+sg12
+S'et_cetera.jpg'
+sg13
+S'Et Cetera'
+sg15
+(lp39
+S'Will science find a cure for television?'
+aS'What does your name mean?'
+aS'What is most absurd in your life?'
+aS'What do you find most absurd about the world?'
+aS'What card do you wish was in this game? Answer it.'
+aS'Use words to paint a picture.'
+aS'Clear your mind of Kant.'
+aS'Tell your favorite joke.'
+aS'Tell a subtle joke.'
+aS"What's the best practical joke you've heard of?"
+aS'Answer the next question you get in a foreign language (if you know any).'
+aS"Do you agree with the claim that Wagner's opera is not as bad as it sounds?"
+aS'Can nine cubical boxes one foot on each side fit inside a cubical box two feet on each side? If no, explain your answer; if yes, check your work.'
+aS'Do you have a favorite comic strip? If so, what is it?'
+asg17
+S''
+sg3
+S'immutable_41'
+p40
+sg19
+g20
+sba(i__main__
+room
+(dp41
+g9
+S''
+sg10
+g11
+sg12
+S'field_of_acrobatics.jpg'
+sg13
+S'Field of Acrobatics'
+sg15
+(lp42
+S'Walk around the room in the silliest walk you can manage.'
+aS'Pull yourself around the room using your arms but not your legs.'
+aS'Do a somersault.'
+aS'Stretch.'
+aS'Roll around the room.'
+aS'Hold your breath.'
+aS'Do five sit-ups.'
+aS'Do a jumping jack.'
+aS'Armwrestle the person next to you.'
+aS'Swim across the floor.'
+aS'Pantomime being trapped in a box.'
+aS'Balance on your heels.'
+aS'Dance with a friend.'
+aS'Punch a friend in the shoulder.'
+asg17
+S''
+sg3
+S'immutable_27'
+p43
+sg19
+g20
+sba(i__main__
+room
+(dp44
+g9
+S''
+sg10
+g11
+sg12
+S'forest.jpg'
+sg13
+S'Forest'
+p45
+sg15
+(lp46
+S'Do you like the outdoors?'
+aS'What is your favorite animal?'
+aS'What is your favorite bird?'
+aS'What is your favorite plant?'
+aS'At what time of day is the sky most beautiful? What is the weather like?'
+aS'Would you rather be able to swim like a fish, fly like a bird, or burrow like a mole?'
+aS'Describe one time you stood or simply sat by a babbling brook.'
+aS"Look closely at another player's hands. What beauty do you see?"
+aS'What is your favorite kind of weather?'
+aS'What kind of landscape would you most like to paint?'
+aS'What do you like more: the feel of grass, or of bare earth, beneath your feet?'
+aS'What outdoor smells bring back memories? What are those memories?'
+aS'What is your favorite season?'
+aS'What does nature mean to you?'
+asg17
+S''
+sg3
+S'immutable_16'
+p47
+sg19
+g20
+sba(i__main__
+room
+(dp48
+g9
+S"There is a place, real or spiritual, where we focus our energies on our hobbies and are replenished. For some it's a garden. For others it's not a garden, at least not literally."
+sg10
+g11
+sg12
+S'garden.jpg'
+sg13
+S'Garden'
+p49
+sg15
+(lp50
+S'What are your hobbies?'
+aS'What hobbies have you stopped?'
+aS'What hobbies would you like to develop?'
+aS'How do your hobbies support your work?'
+aS'Do you enjoy creation?'
+aS'What are the relations between your hobbies?'
+aS'What could you be doing to replenish your spirit that you are not doing?'
+aS"What directions could you explore in your hobbies that you haven't explored?"
+aS"What do you wonder about in other people's hobbies?"
+aS'What is your favorite hobby?'
+aS'What advantages do your hobbies give you?'
+aS'How do your garden-like places connect you with other people?'
+asg17
+S''
+sg3
+S'immutable_17'
+p51
+sg19
+g20
+sba(i__main__
+room
+(dp52
+g9
+S''
+sg10
+g11
+sg12
+S'hall_of_memories.jpg'
+sg13
+S'Hall of Memories'
+sg15
+(lp53
+S'What failures haunt you?'
+aS'What was your favorite place as a child?'
+aS'What was the best year of your life?'
+aS'What was the worst year of your life?'
+aS'What has your greatest success been?'
+aS'What memories of friendships stick with you?'
+aS'Where have you lived?'
+aS'Who has mentored you?'
+aS'What religious experiences have marked you?'
+aS'What do you like to reminisce about?'
+aS'What makes you nostalgic?'
+aS'What events do you remember as if they were yesterday?'
+asg17
+S''
+sg3
+S'immutable_19'
+p54
+sg19
+g20
+sba(i__main__
+room
+(dp55
+g9
+S''
+sg10
+g11
+sg12
+S'hall_of_mirrors.jpg'
+sg13
+S'Hall of Mirrors'
+sg15
+(lp56
+S'What things help you understand yourself?'
+aS'Where are you in life?'
+aS'In what ways are you a reflection of others?'
+aS'What, to you, constitutes majesty?'
+aS'What helps you see into a person?'
+aS'If an author were to portray you as a character in a novel, who would that character be?'
+aS"How would a friend describe you? What about someone who didn't like you?"
+aS'How would you like to be understood?'
+aS'What role does metacognition play in your life? What goes on in that metacognition?'
+aS'What your clothes tell about you?'
+aS'What has this game let you realize about yourself?'
+aS'Has interacting with computers taught you anything about what it means to be human? If so, what?'
+aS'What in life is difficult for you?'
+aS'What about you might not be obvious to someone who was just getting to know you?'
+asg17
+S''
+sg3
+S'immutable_20'
+p57
+sg19
+g20
+sba(i__main__
+room
+(dp58
+g9
+S''
+sg10
+g11
+sg12
+S'hall_of_secrets.jpg'
+sg13
+S'Hall of Secrets'
+sg15
+(lp59
+S'Who are you?'
+aS'Who are you trying to become?'
+aS'What failures haunt you?'
+aS'Who would you like to become, but believe you cannot?'
+aS'What treasures do you hold inside you?'
+aS'What is your most treasured achievement?'
+aS'What are your dreams?'
+aS'What do you wish to share with other people, but are afraid to?'
+aS'What of yourself do you despair of explaining to others?'
+aS"What can you see that other people can't?"
+aS"What can other people see that you can't?"
+aS'What is in your inner room?'
+aS'What is painful for you to know?'
+asg17
+S''
+sg3
+S'immutable_21'
+p60
+sg19
+g20
+sba(i__main__
+room
+(dp61
+g9
+S'Sometimes it is best not to speak, but meditate in silence.'
+sg10
+g11
+sg12
+S'hall_of_silence.jpg'
+sg13
+S'Hall of Silence'
+sg15
+(lp62
+S'Think about the glory of God.'
+aS'Reflect on an object of beauty.'
+aS'Reminisce about a moment when you have been completely calm.'
+aS'Slowly repeat to yourself (quietly) a cherished quotation.'
+aS'Meditate on something you hope.'
+aS'Breate in and out slowly until your next turn.'
+aS'Reflect silently on what others have given to you.'
+aS'Close your eyes and withdraw into yourself for a moment.'
+aS'Hold still and listen to the sound of your heartbeat.'
+aS'Look at what is around you and silently take in the beauty.'
+aS'Silently think about what it is that you like about your favorite book.'
+aS'Spend a moment to think wordlessly of that which you cannot speak in language.'
+aS'Think about what helps you grow still.'
+aS'Listen to the sounds around you.'
+asg17
+S''
+sg3
+S'immutable_22'
+p63
+sg19
+g20
+sba(i__main__
+room
+(dp64
+g9
+S''
+sg10
+g11
+sg12
+S'hall_of_treasures.jpg'
+sg13
+S'Hall of Treasures'
+sg15
+(lp65
+S'What was the happiest day of your life?'
+aS'What do you most value?'
+aS'What is one small gift that is significant to you?'
+aS'What has most recently made your day?'
+aS'What was your favorite place as a child?'
+aS'Tell about a cherished item in your room. What is its story?'
+aS'What is your favorite food?'
+aS'What is your favorite drink?'
+aS'Tell about your favorite voyage.'
+aS'What do you like to imagine?'
+aS'Whose advice do you value?'
+aS'What do you enjoy learning about?'
+aS'How does each of the senses add to your life?'
+aS'What do you most like to think about?'
+aS"What's your favorite place to be?"
+aS'What is your most cherished hope?'
+aS'What is most exciting to you about the hope of Heaven?'
+asg17
+S''
+sg3
+S'immutable_23'
+p66
+sg19
+g20
+sba(i__main__
+room
+(dp67
+g9
+S''
+sg10
+g11
+sg12
+S'imaginarium.jpg'
+sg13
+S'Imaginarium'
+p68
+sg15
+(lp69
+S'Imagine being in a cabin out in the woods, on a placid lake, with birds flying above and bullfrogs croaking in the reeds.'
+aS'Imagine a small white feather brushing ever so lightly against the back of your knee, up and down, up and down.'
+aS'Imagine that you are a fish swimming through the sea.'
+aS'Imagine that you are an inventor, tinkering on an intricate clockwork device.'
+aS'Imagine that you are a traveller in the Middle Ages, going to meet friends in a castle.'
+aS'Imagine that you are exploring a labyrinthine network of tunnels underneath a great city.'
+aS'Imagine that you are walking the streets of an ancient mist-cloaked city, where yellow roses climb cracked stone walls.'
+aS'Imagine that you are in a great stone cathedral, with colored light streaming through stained glass.'
+aS'Imagine that you are in a forest, and a butterfly alights on your finger.'
+aS'Imagine that you are on a sun-bleached rock, in crystalline starlight and whistling wind.'
+aS'Imagine that you are in the heart of a great and wonderfully warm rainstorm in the middle of summer.'
+aS'Imagine that you are in a place of complete silence, complete stillness, complete darkness.'
+asg17
+S''
+sg3
+S'immutable_18'
+p70
+sg19
+g20
+sba(i__main__
+room
+(dp71
+g9
+S''
+sg10
+g11
+sg12
+S'inner_sanctum.jpg'
+sg13
+S'Inner Sanctum'
+sg15
+(lp72
+S'How has God met you?'
+aS"What do you believe God's plan is for humanity?"
+aS'When God blesses a person, what does that blessing mean?'
+aS'What beliefs are most important to you'
+aS'What virtues are most important to you?'
+aS'How do you understand prayer?'
+aS'What is your spiritual practice?'
+aS'What is the relationship between the supernatural and other facets of life?'
+aS'What is the relation between matter and spirit?'
+aS'What role models do you choose in the realm of faith?'
+aS'How do you seek to give the sacret to others?'
+aS'Who do you believe that Jesus is?'
+aS'Who is your God?'
+aS'What are your spiritual weaknesses?'
+aS'Do you spend enough time growing still? If not, what could you do to change that?'
+aS'Is God using your sins to make you holy?'
+asg17
+S''
+sg3
+S'immutable_5'
+p73
+sg19
+g20
+sba(i__main__
+room
+(dp74
+g9
+S''
+sg10
+g11
+sg12
+S'labyrinth.jpg'
+sg13
+S'Labyrinth'
+p75
+sg15
+(lp76
+S'What times have you found, as it were, a secret passage off of the ordinary course of things into something extraordinary?'
+aS'What times have something that seemed perfectly straightforward turned out to be surprisingly twisted?'
+aS'What niches give you a hiding place.'
+aS"Sometimes there's a shimmer&mdash;something haunting in a place or a song that hints of something beyond. What things have held that shimmer for you?"
+aS'What have been your favorite places to explore?'
+aS'What things hold wonder for you?'
+aS"What places do you wish you'd explored more?"
+aS'What places did you like to fantasize about as a child?'
+aS'What experiences have you had when it seemed you had stepped into another time?'
+aS'When have you gotten lost?'
+aS'What things in life have you found that, however much you explored them, there was always more to explore?'
+aS'What places do you want to explore?'
+asg17
+S''
+sg3
+S'immutable_24'
+p77
+sg19
+g20
+sba(i__main__
+room
+(dp78
+g9
+S''
+sg10
+g11
+sg12
+S'library.jpg'
+sg13
+S'Library'
+p79
+sg15
+(lp80
+S'What is your favorite book? Why?'
+aS"Describe a character whom you identify with in a novel you've read, and what about the character draws you."
+aS'What is a book that has challenged you?'
+aS'What was your favorite book as a child?'
+aS"Of the books you've read, which has disappointed you most?"
+aS"What is the book you'd most like to read of the ones you haven't got around to reading?"
+aS"Have you ever searched for a book that you wanted to read, only to find that it hadn't been written? What were you looking for?"
+aS'If you could write a book, what would it be like?'
+aS'What book would you most reccommend to the others present?'
+aS'What is the common thread running through the books you like most?'
+aS"What is one book that you've found to be useful for a reason different from what it was originally written?"
+aS'What is a book that surprised you by how good it was?'
+aS'What is your favorite book of the Bible?'
+asg17
+S''
+sg3
+S'immutable_25'
+p81
+sg19
+g20
+sba(i__main__
+room
+(dp82
+g9
+S''
+sg10
+g11
+sg12
+S'meeting_place.jpg'
+sg13
+S'Meeting Place'
+sg15
+(lp83
+S'How do your friendships enrich your life?'
+aS'How have you best been able to meet other people?'
+aS'What makes friendship real?'
+aS'What have other people taught you about relating?'
+aS'How do you balance community and solitude?'
+aS'How is your life enriched by community?'
+aS'What helps you understand other people?'
+aS'What is to you the most difficult part of living in community with other people?'
+aS'What do you do to be a good friend?'
+aS'What of your identity is given to you by those to whom you are connected?'
+aS'What do you like to do with your friends?'
+aS'What friends have most enriched your life?'
+aS'Is living in community part of what it means to be human? Why or why not?'
+asg17
+S''
+sg3
+S'immutable_26'
+p84
+sg19
+g20
+sba(i__main__
+room
+(dp85
+g9
+S"Maybe this is officially called an obstacle course. It has a slight spirit of silliness, you see, but there's more to it than just silliness."
+sg10
+g11
+sg12
+S'obstacle_course.jpg'
+sg13
+S'Obstacle Course'
+sg15
+(lp86
+S'Give a friend a hug.'
+aS'Give a friend a kiss.'
+aS'Flip a friend over your shoulder.'
+aS'Poke a friend in the side.'
+aS'Do a push-up.'
+aS'Put your socks on your ears.'
+aS"Rub a friend's head."
+aS'Balance on your toes.'
+aS"Grab a friend's nose."
+aS'Close your eyes and try to find the door.'
+aS'Crawl around the room.'
+aS"Rummage through the rubbish and see if there's anything you want to keep."
+aS'Sing "Happy birthday!" in at least three different keys.'
+aS'Belch.'
+aS'Carry a friend around the room.'
+asg17
+S''
+sg3
+S'immutable_15'
+p87
+sg19
+g20
+sba(i__main__
+room
+(dp88
+g9
+S''
+sg10
+g11
+sg12
+S'passageway.jpg'
+sg13
+S'Passageway'
+p89
+sg15
+(lp90
+S'Where have you travelled?'
+aS'Where are you moving, spiritually?'
+aS'In what metaphorical senses do you travel?'
+aS'Are you a wayfarer?'
+aS'How have your travels enriched you?'
+aS'Would you rather live in one foreign country for five years, or five such countries for one year?'
+aS'What sights would you like to see?'
+aS'What have you learned about yoruself in your encounters with other people, other lands, the thoughts of other times?'
+aS'What places would you like to tour?'
+aS'What places would you like to live in?'
+aS'What have you learned by seeing how people from your country behave in other countries?'
+aS'What have you learned by seeing how people from other countries behave in your country?'
+aS"What interests you in the cultures you've encountered?"
+aS'What is distinctive about your native land?'
+aS'Why do we travel?'
+aS'What do you agree with in your own culture?'
+aS'What do you disagree with in your own culture?'
+aS'What do you agree with in another culture?'
+aS'What do you disagree with in another culture?'
+asg17
+S''
+sg3
+S'immutable_28'
+p91
+sg19
+g20
+sba(i__main__
+room
+(dp92
+g9
+S''
+sg10
+g11
+sg12
+S'place_of_riddles.jpg'
+sg13
+S'Place of Riddles'
+sg15
+(lp93
+S'Who? What? Why?'
+aS'What does it mean to be human?'
+aS'What is wrong with the world?'
+aS'How can the problems in the world be solved?'
+aS'What is the meaning of life?'
+aS'What cannot be described in words?'
+aS'Is technology serving us, or are we serving technology?'
+aS'Which is more dangerous: risk or safety?'
+aS'In what ways are you looking for the right things in the wrong places?'
+aS'Think about a great failing of yours. If you could go back and change it, would you?'
+aS'Can man understand God?'
+aS'Where have you seen two opposing schools that were both wrong because of where they both agree?'
+aS'Is it possible for a person to transcend his own perspective?'
+aS'Is beauty forged in the eye of the beholder?'
+aS'Why do we laugh?'
+aS'Is money a blessing, a curse, or both?'
+aS'Are goodness, beauty, and truth three separate things, or in essence only one?'
+asg17
+S''
+sg3
+S'immutable_29'
+p94
+sg19
+g20
+sba(i__main__
+room
+(dp95
+g9
+S''
+sg10
+g11
+sg12
+S'swimming_pool.jpg'
+sg13
+S'Swimming Pool'
+sg15
+(lp96
+S'Do you like to swim?'
+aS'Do you like to swim underwater?'
+aS'What is your favorite fish?'
+aS'What do you like about the sea?'
+aS'What would you most like about being a mermaid?'
+aS'As a child, which did you like more: swimming laps, or splashing your friends?'
+aS'When you swim, do you wear goggles? Do you look around under the surface of the water?'
+aS'Would you like to own an underwater castle?'
+aS'Would you like to pet a dolphin?'
+aS'Have you  ever gone snorkelling?'
+aS'Have you ever gone SCUBA diving?'
+aS'What do you like most about swimming?'
+aS"What's your best memory involving water?"
+asg17
+S''
+sg3
+S'immutable_30'
+p97
+sg19
+g20
+sba(i__main__
+room
+(dp98
+g9
+S'I hope you\'ve enjoyed the game; please play again sometime!\r\n\r\n<a href="http://JonathansCorner.com" target="_blank">Jonathan Hayward</a>'
+sg10
+g11
+sg12
+S'thank_you_for_playing_catch_the_furball.jpg'
+sg13
+S'Thank You for Playing Catch the Furball!'
+sg15
+(lsg17
+S' is_quit'
+sg3
+S'immutable_33'
+p99
+sg19
+g20
+sba(i__main__
+room
+(dp100
+g9
+S'The furball has been caught and restored to comfort and safety. Congratulations!\r\n\r\n<a href="http://JonathansCorner.com" target="_blank">Jonathan Hayward</a>'
+sg10
+g11
+sg12
+S'the_furball_has_been_caught.jpg'
+sg13
+S'The Furball has been Caught!'
+sg15
+(lsg17
+S' is_ending'
+sg3
+S'immutable_2'
+p101
+sg19
+g20
+sba(i__main__
+room
+(dp102
+g9
+S''
+sg10
+g11
+sg12
+S'theatre.jpg'
+sg13
+S'Theatre'
+p103
+sg15
+(lp104
+S"What character do you most identify with, in the literature and movies that you've experienced?"
+aS'Pretend to be someone from your favorite book.'
+aS'Who did you pretend to be as a child? Who would you like to pretend to be now?'
+aS'Pick up a nearby item and pantomime with it.'
+aS'Act for a short while in the persona of a character from a story (or one you make up).'
+aS'Pick out another person with whom to act a vignette from a well-known movie.'
+aS'What masks help you reveal yourself?'
+aS'Make believe.'
+aS'What, in your imagination, could hte people and things around you become?'
+aS'Tell how your day has been, as if it were not you but a close friend speaking for you.'
+aS"In the stories you've read, what has drawn you in a hero?"
+aS'Pull a couple of players aside, and do a classic boy scout skit.'
+asg17
+S''
+sg3
+S'immutable_31'
+p105
+sg19
+g20
+sba(i__main__
+room
+(dp106
+g9
+S'Somewhere in a beautiful, labyrinthine realm, a furball is away from its home, lost and confused. It is up to you and your friends to surround it so it can be caught and returned to safety.\r\n\r\nAs you move through the realm, you will answer cards with questions to help you and your friends get to know each other better. You will see a picture of the place you\'re at, then below that a card, a map of the labyrinth, and finally the buttons you click on to move: a circle to stay in place, or arrows to travel North, South, East, and West. You can catch the furball by first surrounding it and second having someone go where it is. Don\'t worry; the furball doesn\'t bite. It\'s just a bit scared.\r\n\r\nEnjoy the voyage. Relax. Explore. Savor a chance to travel and get to know your friends a bit better.\r\n\r\n<a href="http://JonathansCorner.com" target="_blank">Jonathan Hayward</a>'
+sg10
+g11
+sg12
+S'welcome.jpg'
+sg13
+S'Welcome!'
+sg15
+(lsg17
+S' is_introduction'
+sg3
+g4
+sg19
+g20
+sbasb.

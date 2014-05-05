@@ -1,0 +1,36 @@
+[DEFAULT]
+
+# Whether the form's action is post or get. Must be post or get.
+action_method=post
+
+# The form's action URL.
+action_url=ACTION_URL
+
+# How wide of a border surrounds pictures, cards, and the map.
+border_width=7
+
+# What the name is of the creature that the players are trying to catch.
+creature_name=The Furball
+
+# The root directory used for data: this file, pickled data, etc.
+data_root=DATA_ROOT
+
+# The base URL for documents referenced by the script. It is preferable not to
+# include the initial http://hostname part.
+document_url=DOCUMENT_URL
+
+# Whether editing the room data is enabled. This should be a yes or no value.
+edit_is_enabled=no
+
+# The password needed to edit the room. If you turn on editing, you should
+# change this.
+edit_password=xyzzy
+
+# How wide text inputs are.
+text_width=80
+
+# The chance of an extra tunnel being dug between two rooms (between 0.0 and
+# 1.0). The higher this value, the more connected the labyrinth, and the lower
+# the value, the less connected.
+tunnel_chance = 1.0
+
