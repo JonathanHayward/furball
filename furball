@@ -527,26 +527,37 @@ def has_neighbor(identifier, direction, mode):
     if (mode == "edit"):
         return 1
     else:
-        if direction == "self" or direction == "stay":
+        if direction.lower() == "self" or direction.lower() == "stay":
             return 1
         else:
-            try:
-                if direction == "north":
-                    find_room_wrapper(identifier).neighbors["north"] 
-                    return 1
-                elif direction == "south":
-                    find_room_wrapper(identifier).neighbors["south"] 
-                    return 1
-                elif direction == "east":
-                    find_room_wrapper(identifier).neighbors["east"] 
-                    return 1
-                elif direction == "west":
-                    find_room_wrapper(identifier).neighbors["west"] 
+            if (direction.lower() == "north"):
+                if "north" in find_room_wrapper(identifier).neighbors.keys() \
+                  or "North" in find_room_wrapper(identifier).neighbors.keys():
                     return 1
                 else:
-                    find_room_wrapper(identifier).neighbors[direction] 
+                    return 0
+            elif (direction.lower() == "south"):
+                if "south" in find_room_wrapper(identifier).neighbors.keys() \
+                  or "South" in find_room_wrapper(identifier).neighbors.keys():
                     return 1
-            except KeyError:
+                else:
+                    return 0
+            elif (direction.lower() == "east"):
+                if "east" in find_room_wrapper(identifier).neighbors.keys() or \
+                  "East" in find_room_wrapper(identifier).neighbors.keys():
+                    return 1
+                else:
+                    return 0
+            elif (direction.lower() == "west"):
+                if "west" in find_room_wrapper(identifier).neighbors.keys() or \
+                  "West" in find_room_wrapper(identifier).neighbors.keys():
+                    return 1
+                else:
+                    return 0
+            elif direction.lower() in \
+              find_room_wrapper(identifier).neighbors.keys():
+                return 1
+            else:
                 return 0
 
 def init():
@@ -992,7 +1003,7 @@ def output_main_body():
                     output_new_player()
             elif mode == "play":
                 if not game_won:
-                    if get_cgi("more_options") == "more_options":
+                    if get_cgi("more_options.x") != "":
                         output_additional_options()
                     else:
                         output_play()
@@ -1233,7 +1244,7 @@ def process_changes():
         except ValueError:
             pass
     elif get_cgi("mode") == "play":
-        if not(get_cgi("more_options") == "more_options" or \
+        if not(get_cgi("more_options.x") != "" or \
           get_cgi("no_process_move") == "no_process_move"):
             process_move()
     if get_cgi("change_made") != "":
@@ -1336,18 +1347,43 @@ def process_move():
             if has_neighbor(mutable_master.current_player.room_wrapper.identifier, \
               move, "play"):
                 if move == "north":
-                    mutable_master.current_player.room_wrapper = \
-                      mutable_master.current_player.room_wrapper.neighbors["north"]
+                    if "north" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["north"]
+                    elif "North" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["North"]
                 elif move == "south":
-                    mutable_master.current_player.room_wrapper = \
-                      mutable_master.current_player.room_wrapper.neighbors["south"]
+                    if "south" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["south"]
+                    elif "South" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["South"]
                 elif move == "east":
-                    mutable_master.current_player.room_wrapper = \
-                      mutable_master.current_player.room_wrapper.neighbors["east"]
+                    if "east" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["east"]
+                    elif "East" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["East"]
                 elif move == "west":
-                    mutable_master.current_player.room_wrapper = \
-                      mutable_master.current_player.room_wrapper.neighbors["west"]
-                else:
+                    if "west" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["west"]
+                    elif "West" in \
+                      mutable_master.current_player.room_wrapper.neighbors.keys():
+                        mutable_master.current_player.room_wrapper = \
+                          mutable_master.current_player.room_wrapper.neighbors["West"]
+                elif move in \
+                  mutable_master.current_player.room_wrapper.neighbors.keys():
                     mutable_master.current_player.room_wrapper = \
                       mutable_master.current_player.room_wrapper.neighbors[move]
         if (move != "stay" and \

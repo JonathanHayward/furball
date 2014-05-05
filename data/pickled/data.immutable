@@ -212,16 +212,17 @@ aS'Are you more of an internal or external person?'
 aS'When you try to make a memory, do you try to achieve this through internal or external circumstances?'
 aS'How does happiness relate to internal conditions? External conditions? Is it defined by one, by both, by something else? If you seek happiness, does the result depend on where you are seeking it? How?'
 aS'A wedding often involves such elaborate preparations that the bride gets sick from stress during the honeymoon. What would be a better way of creating a memory?'
+p37
 asg17
 S''
 sg3
 S'immutable_14'
-p37
+p38
 sg19
 g20
 sba(i__main__
 room
-(dp38
+(dp39
 g9
 S''
 sg10
@@ -231,7 +232,7 @@ S'et_cetera.jpg'
 sg13
 S'Et Cetera'
 sg15
-(lp39
+(lp40
 S'Will science find a cure for television?'
 aS'What does your name mean?'
 aS'What is most absurd in your life?'
@@ -250,12 +251,12 @@ asg17
 S''
 sg3
 S'immutable_41'
-p40
+p41
 sg19
 g20
 sba(i__main__
 room
-(dp41
+(dp42
 g9
 S''
 sg10
@@ -265,7 +266,7 @@ S'field_of_acrobatics.jpg'
 sg13
 S'Field of Acrobatics'
 sg15
-(lp42
+(lp43
 S'Walk around the room in the silliest walk you can manage.'
 aS'Pull yourself around the room using your arms but not your legs.'
 aS'Do a somersault.'
@@ -284,12 +285,12 @@ asg17
 S''
 sg3
 S'immutable_27'
-p43
+p44
 sg19
 g20
 sba(i__main__
 room
-(dp44
+(dp45
 g9
 S''
 sg10
@@ -298,9 +299,9 @@ sg12
 S'forest.jpg'
 sg13
 S'Forest'
-p45
+p46
 sg15
-(lp46
+(lp47
 S'Do you like the outdoors?'
 aS'What is your favorite animal?'
 aS'What is your favorite bird?'
@@ -319,12 +320,12 @@ asg17
 S''
 sg3
 S'immutable_16'
-p47
+p48
 sg19
 g20
 sba(i__main__
 room
-(dp48
+(dp49
 g9
 S"There is a place, real or spiritual, where we focus our energies on our hobbies and are replenished. For some it's a garden. For others it's not a garden, at least not literally."
 sg10
@@ -333,9 +334,9 @@ sg12
 S'garden.jpg'
 sg13
 S'Garden'
-p49
+p50
 sg15
-(lp50
+(lp51
 S'What are your hobbies?'
 aS'What hobbies have you stopped?'
 aS'What hobbies would you like to develop?'
@@ -352,12 +353,12 @@ asg17
 S''
 sg3
 S'immutable_17'
-p51
+p52
 sg19
 g20
 sba(i__main__
 room
-(dp52
+(dp53
 g9
 S''
 sg10
@@ -367,7 +368,7 @@ S'hall_of_memories.jpg'
 sg13
 S'Hall of Memories'
 sg15
-(lp53
+(lp54
 S'What failures haunt you?'
 aS'What was your favorite place as a child?'
 aS'What was the best year of your life?'
@@ -385,12 +386,12 @@ asg17
 S''
 sg3
 S'immutable_19'
-p54
+p55
 sg19
 g20
 sba(i__main__
 room
-(dp55
+(dp56
 g9
 S''
 sg10
@@ -400,7 +401,7 @@ S'hall_of_mirrors.jpg'
 sg13
 S'Hall of Mirrors'
 sg15
-(lp56
+(lp57
 S'What things help you understand yourself?'
 aS'Where are you in life?'
 aS'In what ways are you a reflection of others?'
@@ -419,12 +420,12 @@ asg17
 S''
 sg3
 S'immutable_20'
-p57
+p58
 sg19
 g20
 sba(i__main__
 room
-(dp58
+(dp59
 g9
 S''
 sg10
@@ -434,7 +435,7 @@ S'hall_of_secrets.jpg'
 sg13
 S'Hall of Secrets'
 sg15
-(lp59
+(lp60
 S'Who are you?'
 aS'Who are you trying to become?'
 aS'What failures haunt you?'
@@ -452,12 +453,12 @@ asg17
 S''
 sg3
 S'immutable_21'
-p60
+p61
 sg19
 g20
 sba(i__main__
 room
-(dp61
+(dp62
 g9
 S'Sometimes it is best not to speak, but meditate in silence.'
 sg10
@@ -467,7 +468,7 @@ S'hall_of_silence.jpg'
 sg13
 S'Hall of Silence'
 sg15
-(lp62
+(lp63
 S'Think about the glory of God.'
 aS'Reflect on an object of beauty.'
 aS'Reminisce about a moment when you have been completely calm.'
@@ -486,12 +487,12 @@ asg17
 S''
 sg3
 S'immutable_22'
-p63
+p64
 sg19
 g20
 sba(i__main__
 room
-(dp64
+(dp65
 g9
 S''
 sg10
@@ -501,7 +502,7 @@ S'hall_of_treasures.jpg'
 sg13
 S'Hall of Treasures'
 sg15
-(lp65
+(lp66
 S'What was the happiest day of your life?'
 aS'What do you most value?'
 aS'What is one small gift that is significant to you?'
@@ -523,12 +524,12 @@ asg17
 S''
 sg3
 S'immutable_23'
-p66
+p67
 sg19
 g20
 sba(i__main__
 room
-(dp67
+(dp68
 g9
 S''
 sg10
@@ -537,9 +538,9 @@ sg12
 S'imaginarium.jpg'
 sg13
 S'Imaginarium'
-p68
+p69
 sg15
-(lp69
+(lp70
 S'Imagine being in a cabin out in the woods, on a placid lake, with birds flying above and bullfrogs croaking in the reeds.'
 aS'Imagine a small white feather brushing ever so lightly against the back of your knee, up and down, up and down. Does it tingle?'
 aS'Imagine that you are a fish swimming through the sea.'
@@ -556,12 +557,12 @@ asg17
 S''
 sg3
 S'immutable_18'
-p70
+p71
 sg19
 g20
 sba(i__main__
 room
-(dp71
+(dp72
 g9
 S''
 sg10
@@ -571,7 +572,7 @@ S'inner_sanctum.jpg'
 sg13
 S'Inner Sanctum'
 sg15
-(lp72
+(lp73
 S'How has God met you?'
 aS"What do you believe God's plan is for humanity?"
 aS'When God blesses a person, what does that blessing mean?'
@@ -592,12 +593,12 @@ asg17
 S''
 sg3
 S'immutable_5'
-p73
+p74
 sg19
 g20
 sba(i__main__
 room
-(dp74
+(dp75
 g9
 S''
 sg10
@@ -606,9 +607,9 @@ sg12
 S'labyrinth.jpg'
 sg13
 S'Labyrinth'
-p75
+p76
 sg15
-(lp76
+(lp77
 S'What times have you found, as it were, a secret passage off of the ordinary course of things into something extraordinary?'
 aS'What times have something that seemed perfectly straightforward turned out to be surprisingly twisted?'
 aS'What niches give you a hiding place.'
@@ -625,12 +626,12 @@ asg17
 S''
 sg3
 S'immutable_24'
-p77
+p78
 sg19
 g20
 sba(i__main__
 room
-(dp78
+(dp79
 g9
 S''
 sg10
@@ -639,9 +640,9 @@ sg12
 S'library.jpg'
 sg13
 S'Library'
-p79
+p80
 sg15
-(lp80
+(lp81
 S'What is your favorite book? Why?'
 aS"Describe a character whom you identify with in a novel you've read, and what about the character draws you."
 aS'What is a book that has challenged you?'
@@ -659,12 +660,12 @@ asg17
 S''
 sg3
 S'immutable_25'
-p81
+p82
 sg19
 g20
 sba(i__main__
 room
-(dp82
+(dp83
 g9
 S''
 sg10
@@ -674,7 +675,7 @@ S'meeting_place.jpg'
 sg13
 S'Meeting Place'
 sg15
-(lp83
+(lp84
 S'How do your friendships enrich your life?'
 aS'How have you best been able to meet other people?'
 aS'What makes friendship real?'
@@ -692,12 +693,12 @@ asg17
 S''
 sg3
 S'immutable_26'
-p84
+p85
 sg19
 g20
 sba(i__main__
 room
-(dp85
+(dp86
 g9
 S"Maybe this is officially called an obstacle course. It has a slight spirit of silliness, you see, but there's more to it than just silliness."
 sg10
@@ -707,7 +708,7 @@ S'obstacle_course.jpg'
 sg13
 S'Obstacle Course'
 sg15
-(lp86
+(lp87
 S'Give a friend a hug.'
 aS'Give a friend a kiss.'
 aS'Flip a friend over your shoulder.'
@@ -727,12 +728,12 @@ asg17
 S''
 sg3
 S'immutable_15'
-p87
+p88
 sg19
 g20
 sba(i__main__
 room
-(dp88
+(dp89
 g9
 S''
 sg10
@@ -741,9 +742,9 @@ sg12
 S'passageway.jpg'
 sg13
 S'Passageway'
-p89
+p90
 sg15
-(lp90
+(lp91
 S'Where have you travelled?'
 aS'Where are you moving, spiritually?'
 aS'In what metaphorical senses do you travel?'
@@ -768,12 +769,12 @@ asg17
 S''
 sg3
 S'immutable_28'
-p91
+p92
 sg19
 g20
 sba(i__main__
 room
-(dp92
+(dp93
 g9
 S''
 sg10
@@ -783,7 +784,7 @@ S'place_of_riddles.jpg'
 sg13
 S'Place of Riddles'
 sg15
-(lp93
+(lp94
 S'Who? What? Why?'
 aS'What does it mean to be human?'
 aS'What is wrong with the world?'
@@ -805,12 +806,12 @@ asg17
 S''
 sg3
 S'immutable_29'
-p94
+p95
 sg19
 g20
 sba(i__main__
 room
-(dp95
+(dp96
 g9
 S''
 sg10
@@ -820,7 +821,7 @@ S'swimming_pool.jpg'
 sg13
 S'Swimming Pool'
 sg15
-(lp96
+(lp97
 S'Do you like to swim?'
 aS'Do you like to swim underwater?'
 aS'What is your favorite fish?'
@@ -838,12 +839,12 @@ asg17
 S''
 sg3
 S'immutable_30'
-p97
+p98
 sg19
 g20
 sba(i__main__
 room
-(dp98
+(dp99
 g9
 S'I hope you\'ve enjoyed the game; please play again sometime! (And please do <a href="http://JonathansCorner.com">visit my home page</a>--there are a lot of creative things there.)\r\n\r\n<a href="http://JonathansCorner.com">Jonathan Hayward</a>'
 sg10
@@ -857,12 +858,12 @@ sg15
 S' is_quit'
 sg3
 S'immutable_33'
-p99
+p100
 sg19
 g20
 sba(i__main__
 room
-(dp100
+(dp101
 g9
 S'The furball has been caught and restored to comfort and safety. After wandering around lost and confused, it has been brought back to its home. It is now happily eating grass and lettuce, cuddling with other furballs, sleeping in its bunny blanket, playing with little children, and drinking water from its little stream. Congratulations!\r\n\r\nJonathan Hayward (<a href="http://JonathansCorner.com">Home Page</a>)'
 sg10
@@ -876,12 +877,12 @@ sg15
 S' is_ending'
 sg3
 S'immutable_2'
-p101
+p102
 sg19
 g20
 sba(i__main__
 room
-(dp102
+(dp103
 g9
 S''
 sg10
@@ -890,9 +891,9 @@ sg12
 S'theatre.jpg'
 sg13
 S'Theatre'
-p103
+p104
 sg15
-(lp104
+(lp105
 S"What character do you most identify with, in the literature and movies that you've experienced?"
 aS'Pretend to be someone from your favorite book.'
 aS'Who did you pretend to be as a child? Who would you like to pretend to be now?'
@@ -909,12 +910,12 @@ asg17
 S''
 sg3
 S'immutable_31'
-p105
+p106
 sg19
 g20
 sba(i__main__
 room
-(dp106
+(dp107
 g9
 S'Somewhere in a beautiful, labyrinthine realm, a furball is away from its home, lost and confused. It is up to you and your friends to surround it so it can be caught and returned to safety.\r\n\r\nAs you move through the realm, you will answer cards with questions to help you and your friends get to know each other better. You will see a picture of the place you\'re at, then below that a card, a map of the labyrinth, and finally the buttons you click on to move: a circle to stay in place, or arrows to travel North, South, East, and West. <em>You can catch the furball by first surrounding it and second having someone go where it is.</em> Don\'t worry; the furball doesn\'t bite. It\'s just a bit scared.\r\n\r\nEnjoy the voyage. Relax. Explore. Savor a chance to travel and get to know your friends a bit better. As you travel, you\'ll get different cards. Respond to them aloud, so your friends can hear you: as you and your friends answer the cards, you may learn something new about each other. (And if you get a card you simply can\'t answer, don\'t worry about it. Just skip that card, and in all probability, you\'ll have an interesting answer for the next one.)\r\n\r\nJonathan Hayward (<a href="http://JonathansCorner.com">Home Page</a>)'
 sg10

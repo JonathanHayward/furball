@@ -10,9 +10,11 @@ LEGAL
     License
 
         This software is copyright 2003 by Jonathan Hayward, and licensed
-        to you under the Artistic License, which should be present in the
-        file license.txt; if you did not receive this file, consult the
-        version online at http://www.perl.com/language/misc/Artistic.html.
+		and licensed to you under the your choice of the original Artistic
+        License, which should be present in the file artistic.txt, the
+        General Public License version 2.0, which should be present in the
+        file gpl.txt, and the Massachusetts Institute of Technology License,
+        which should be present in the file mit.txt.
 
     Warrantee
 
