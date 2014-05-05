@@ -1,2 +1,2 @@
 #!/bin/sh
-python internals/install
+python internals/install_or_upgrade install

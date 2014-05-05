@@ -101,6 +101,7 @@ class mutable_serializer_linker(ancestor_mutable):
         self.current_card = ""
         self.current_player = None
         self.current_player_index = 0
+        self.flags = ""
         self.furball = None
         self.highest_identifier = 0
         self.map = None
@@ -180,27 +181,63 @@ def build_map():
                     if find_room_wrapper_at(\
                       current_room_wrapper.x_coordinate - 1,
                       current_room_wrapper.y_coordinate) == None:
-                          available_slots.append((\
-                          current_room_wrapper.x_coordinate - 1,
-                          current_room_wrapper.y_coordinate, "East"))
+                        if is_true(get_config_value("more_labyrinthine_map",\
+                          "no")):
+                            if not (current_room_wrapper.x_coordinate - 1, \
+                              current_room_wrapper.y_coordinate, "East") in\
+                              available_slots:
+                                available_slots.append((\
+                                current_room_wrapper.x_coordinate - 1,\
+                                current_room_wrapper.y_coordinate, "East"))
+                        else:
+                            available_slots.append((\
+                            current_room_wrapper.x_coordinate - 1,\
+                            current_room_wrapper.y_coordinate, "East"))
                     if find_room_wrapper_at(\
                       current_room_wrapper.x_coordinate + 1,
                       current_room_wrapper.y_coordinate) == None:
-                          available_slots.append((\
-                          current_room_wrapper.x_coordinate + 1,
-                          current_room_wrapper.y_coordinate, "West"))
+                        if is_true(get_config_value("more_labyrinthine_map",\
+                          "yes")):
+                            if not (current_room_wrapper.x_coordinate + 1, \
+                              current_room_wrapper.y_coordinate, "West") in\
+                              available_slots:
+                                available_slots.append((\
+                                current_room_wrapper.x_coordinate + 1,\
+                                current_room_wrapper.y_coordinate, "West"))
+                        else:
+                            available_slots.append((\
+                            current_room_wrapper.x_coordinate + 1,\
+                            current_room_wrapper.y_coordinate, "West"))
                     if find_room_wrapper_at(\
-                      current_room_wrapper.x_coordinate,
+                      current_room_wrapper.x_coordinate,\
                       current_room_wrapper.y_coordinate + 1) == None:
-                          available_slots.append((\
-                          current_room_wrapper.x_coordinate,
-                          current_room_wrapper.y_coordinate + 1, "South"))
+                        if is_true(get_config_value("more_labyrinthine_map",\
+                          "yes")):
+                            if not (current_room_wrapper.x_coordinate, \
+                              current_room_wrapper.y_coordinate + 1, "South") \
+                              in available_slots:
+                                available_slots.append((\
+                                current_room_wrapper.x_coordinate,\
+                                current_room_wrapper.y_coordinate + 1, "South"))
+                        else:
+                            available_slots.append((\
+                            current_room_wrapper.x_coordinate,\
+                            current_room_wrapper.y_coordinate + 1, "South"))
                     if find_room_wrapper_at(\
-                      current_room_wrapper.x_coordinate,
+                      current_room_wrapper.x_coordinate,\
                       current_room_wrapper.y_coordinate - 1) == None:
-                          available_slots.append((\
-                          current_room_wrapper.x_coordinate,
-                          current_room_wrapper.y_coordinate - 1, "North"))
+                        if is_true(get_config_value("more_labyrinthine_map",\
+                          "yes")):
+                            if (current_room_wrapper.x_coordinate, \
+                              current_room_wrapper.y_coordinate - 1, "North") \
+                              in available_slots:
+                                available_slots.append((\
+                                current_room_wrapper.x_coordinate,\
+                                current_room_wrapper.y_coordinate - 1, "North"))
+                        else:
+                            available_slots.append((\
+                            current_room_wrapper.x_coordinate,\
+                            current_room_wrapper.y_coordinate - 1, "North"))
                 new_passage = available_slots[random_range(\
                   len(available_slots))]
                 new_room_wrapper = mutable_room_wrapper()
@@ -366,6 +403,12 @@ def find_room_wrapper_at(x_coordinate, y_coordinate):
           is_in_normal_use(candidate.room_identifier):
             return candidate
     return None
+
+def furball_always_tries_to_move():
+    if hasattr(mutable_master, "flags"):
+        return test_flag(mutable_master.flags, "furball_always_tries_to_move")
+    else:
+        return is_true(get_config_value("furball_always_tries_to_move", "yes"))
 
 def get_absolute_path(name):
     """Get the absolute path for a file given its relative path to the script's
@@ -551,6 +594,9 @@ def load_or_create_data():
         mutable_master = mutable_serializer_linker()
         mutable_master.furball = furball()
         build_map()
+        if get_config_value("furball_always_tries_to_move", "yes"):
+            mutable_master.flags = set_flag(mutable_master.flags,\
+              "furball_always_tries_to_move")
 
 def next_players_turn():
     mutable_master.current_player_index = \
@@ -573,7 +619,7 @@ def output_additional_options():
       "value=\"new_player\"> Add a new player.")
     output_paragraph(2, "Name or Nickname:")
     output_paragraph(2, "<input type=\"text\" name=\"player_name\" " + \
-      "width=\"" + get_text_width() + "\">")
+      "size=\"" + get_text_width() + "\">")
     output_paragraph(2, "(Children under 13 need their parents' " + \
       "permission to play due to the Children's Online Privacy Protection " + \
       "Act. Here's the <a href=\"" + \
@@ -605,13 +651,18 @@ def output_additional_options():
 
 def output_card():
     if mutable_master.current_card != "":
-        output("<table width=\"50%\" align=\"center\" border=\"0\"" + \
+        output("<table style=\"margin-left: auto; margin-right: " + \
+          "auto\"><tr><td>")
+        output_header(1, 1, "Your Card:")
+        output("</td></tr></table>")
+        output("<table width=\"50%\" style=\"margin-left: auto; " + \
+          "margin-right: auto\" border=\"0\"" + \
           "cellpadding=\"0\" cellspacing=\"0\">")
         output("<tr><td class=\"card_border\">")
         output("<table width=\"100%\" border=\"0\" cellspacing=\"" +
           get_border_width() + "\" " + "cellpadding=\"15\">")
         output("<tr><td class=\"card_proper\">")
-        output(get_htmlized_text(0, "<em>" + mutable_master.current_card + \
+        output(get_htmlized_text(1, "<em>" + mutable_master.current_card + \
           "</em>", "card_text"))
         output("</td></tr>")
         output("</table>")
@@ -620,9 +671,11 @@ def output_card():
 
 def output_centered_paragraph(indent_level, text):
     """Output a paragraph of a given indentation level and text."""
-    output("<p align=\"center\" style=\"margin-left: " +\
+    output("<table style=\"margin-left: auto; margin-right: auto\"><tr><td>")
+    output("<p style=\"margin-left: " +\
       get_indent_value(indent_level) + "; margin-right: " + \
-      get_indent_value(indent_level) + "\">" + text + "</p>\n")
+      get_indent_value(indent_level) + "; margin-top: 0cm\">" + text + "</p>\n")
+    output("</td></tr></table>")
 
 def output_checkbox(indent_level, checked, name, text):
     result="<input type=\"checkbox\" name=\"" + name + "\" value=\"" + \
@@ -652,11 +705,17 @@ def output_display_room(identifier, mode):
         if mode == "play":
             output("<input type=\"hidden\" name=\"mode\" value=\"play\">")
         if room_to_display.name != "":
-            output("<h1 align=\"center\"><em>" + room_to_display.name + \
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<h1><em>" + room_to_display.name + \
               "</em></h1>")
+            output("</td></tr></table>")
         if mode == "play":
-            output("<h2 align=\"center\">" + \
-              mutable_master.current_player.name + "'s Turn</h2>")
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<h2>" + mutable_master.current_player.name + \
+              "'s Turn</h2>")
+            output("</td></tr></table>")
             if len(find_room_wrapper(identifier).neighbors.keys()) == 1:
                 output_centered_paragraph(2, "<em>To move, use the arrow " + \
                   "at the bottom of the page.</em>")
@@ -664,8 +723,8 @@ def output_display_room(identifier, mode):
                 output_centered_paragraph(2, "<em>To move, use the arrows " + \
                   "at the bottom of the page.</em>")
         if room_to_display.image_url != "":
-            output("<table align=\"center\" border=\"0\"" + \
-              "cellpadding=\"0\" cellspacing=\"0\">")
+            output("<table style=\"margin-left: auto; margin-right: auto\" " \
+              + " border=\"0\" cellpadding=\"0\" cellspacing=\"0\">")
             output("<tr><td class=\"picture_border\">")
             output("<table border=\"0\" cellspacing=\"" + \
               get_border_width() + "\" " + "cellpadding=\"0\">")
@@ -693,7 +752,10 @@ def output_display_room(identifier, mode):
             output_map()
             output("<br><br>")
         if mode == "play" and is_in_normal_use(identifier):
-            output("<h1 align=\"center\"><em>Your Move:</em></h1>")
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<h1><em>Your Move:</em></h1>")
+            output("</td></tr></table>")
             output_room_navigation(identifier, mode)
             output("<br>")
             output_centered_paragraph(0, "<input type=\"image\" " + \
@@ -705,9 +767,12 @@ def output_display_room(identifier, mode):
               "value=\"new_player\">")
             output_submit_button()
         if mode == "win":
-            output("<p align=\"center\"><a href=\"" + get_action_url() + \
-              "\"><img src=\"" + convert_to_url("play_again.gif") + \
-              "\" border=\"0\" alt=\"Play Again\"></a></p>")
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<a href=\"" + get_action_url() + "\"><img src=\"" + \
+              convert_to_url("play_again.gif") + \
+              "\" border=\"0\" alt=\"Play Again\"></a>")
+            output("</td></tr></table>")
         elif mode == "edit":
             output("<input type=\"hidden\" name=\"room\" value=\"" + \
               identifier + "\">")
@@ -716,9 +781,12 @@ def output_display_room(identifier, mode):
               "room.<br>\n")
             output_submit_button()
         elif mode == "quit":
-            output("<p align=\"center\"><a href=\"" + get_action_url() + \
-              "\"><img src=\"" + convert_to_url("play_again.gif") + \
-              "\" border=\"0\" alt=\"Play Again\"></a></p>")
+            output("<table style=\"margin-left: auto; margin-right: " + \
+              "auto\"><tr><td>")
+            output("<a href=\"" + get_action_url() + "\"><img src=\"" + \
+              convert_to_url("play_again.gif") + \
+              "\" border=\"0\" alt=\"Play Again\"></a>")
+            output("</td></tr></table>")
     else:
         output_error("I'm supposed to let you see a room, but I can't " + \
         "find the room you selected.")
@@ -728,7 +796,8 @@ def output_edit_introduction():
     if is_true(get_config_value("edit_is_enabled", "no")):
         output("<input type=\"hidden\" name=\"mode\" value=\"edit\">")
         output_header(2, 1, "Please supply the editing password:")
-        output_paragraph(1, "<input type=\"password\" name=\"password\">")
+        output_paragraph(1, "<input type=\"password\" name=\"password\"" + \
+          "size=\"" + get_text_width() + "\">")
         output_submit_button()
     else:
         output_paragraph(1, "I'm sorry, but editing this program's data " + \
@@ -840,9 +909,12 @@ def output_game_quit():
           "hope you've enjoyed it; please play again sometime!")
         output_paragraph(1, "<a href=\"http://JonathansCorner.com\" " + \
           "target=\"_blank\">Jonathan Hayward</a>")
-        output("<p align=\"center\"><a href=\"" + get_action_url() + \
+        output("<table style=\"margin-left: auto; margin-right: " + \
+          "auto\"><tr><td>")
+        output("<a href=\"" + get_action_url() + \
           "\"><img src=\"" + convert_to_url("play_again.gif") + \
-          "\" border=\"0\" alt=\"Play Again\"></a></p>")
+          "\" border=\"0\" alt=\"Play Again\"></a>")
+        output("</td></tr></table>")
 
 def output_header(header_level, indent_level, text):
     """Output an HTML header of a given HTML level, indentation level, and
@@ -866,6 +938,8 @@ def output_main_body():
             if mode == "create_new_room":
                 output_edit_room(new_room_identifier)
             elif mode == "edit" or mode == "delete_room":
+                output_centered_paragraph(1, "Version " + \
+                  "CURRENT_VERSION_NUMBER, Release CURRENT_RELEASE_NUMBER")
                 output_header(1, 0, "Editing Options")
                 output_paragraph(1, "<input type=\"radio\" name=\"mode\" " + \
                   "value=\"create_new_room\" checked> " + \
@@ -941,8 +1015,12 @@ def output_map():
                 lowest_x_coordinate = current_room_wrapper.x_coordinate
             if current_room_wrapper.y_coordinate < lowest_y_coordinate:
                 lowest_y_coordinate = current_room_wrapper.y_coordinate
-    output("<table align=\"center\" border=\"0\"" + \
-      "cellpadding=\"0\" cellspacing=\"0\">")
+    output("<table style=\"margin-left: auto; margin-right: " + \
+      "auto\"><tr><td>")
+    output_header(1, 1, "The Map:")
+    output("</td></tr></table>")
+    output("<table style=\"margin-left: auto; margin-right: auto\" " + \
+      "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">")
     output("<tr><td class=\"map_border\">")
     output("<table width=\"100%\" border=\"0\" cellspacing=\"" + \
       get_border_width() + "\" " + \
@@ -1050,8 +1128,8 @@ def output_play():
       "play")
     
 def output_room_navigation(identifier, mode):
-    output("<table align=\"center\" border=\"0\" cellpadding=\"0\" " + \
-      "cellspacing=\"0\">")
+    output("<table style=\"margin-left: auto; margin-right: auto\" " + \
+      "border=\"0\" cellpadding=\"0\" cellspacing=\"0\">")
     output("<tr><td></td>")
     if (has_neighbor(identifier, "North", mode)):
         output("<td><input type=\"image\" name=\"move\" value=\"North\" " + \
@@ -1235,35 +1313,40 @@ def process_move():
     if mutable_master.current_player is None:
         return
     else:
+        old_room_wrapper = mutable_master.current_player.room_wrapper
         if move != "Stay":
-            old_room_wrapper = mutable_master.current_player.room_wrapper
             if has_neighbor(mutable_master.current_player.room_wrapper.identifier, \
               move, "play"):
                 mutable_master.current_player.room_wrapper = \
                   mutable_master.current_player.room_wrapper.neighbors[move]
-            if players_in(mutable_master.furball.room_wrapper) != []:
-                room_wrappers_to_hide_in = []
-                for room_wrapper_direction in \
-                  mutable_master.furball.room_wrapper.neighbors.keys():
-                    if players_in(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction]) == [] \
-                      and mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction] != old_room_wrapper:
-                        room_wrappers_to_hide_in.append(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction])
-                if len(room_wrappers_to_hide_in) > 0:
-                    mutable_master.furball.room_wrapper = \
-                      room_wrappers_to_hide_in[random_range(len(room_wrappers_to_hide_in))]
-                else:
-                    game_won = 1
-                    mutable_master.current_card = ""
-                    try:
-                        output_display_room(find_ending_room().identifier, \
-                          "win")
-                    except AttributeError:
-                        output_centered_paragraph(1, "You've won the game!")
-                        output("<p align=\"center\"><a href=\"" + \
-                          get_action_url() + "\"><img src=\"" + \
-                          convert_to_url("play_again.gif") + \
-                          "\" border=\"0\" alt=\"Play Again\"></a></p>")
-                    remove_mutable_data()
+        if (move != "Stay" and \
+          players_in(mutable_master.furball.room_wrapper) != []) or \
+          furball_always_tries_to_move():
+            room_wrappers_to_hide_in = []
+            for room_wrapper_direction in \
+              mutable_master.furball.room_wrapper.neighbors.keys():
+                if players_in(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction]) == [] \
+                  and mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction] != old_room_wrapper:
+                    room_wrappers_to_hide_in.append(mutable_master.furball.room_wrapper.neighbors[room_wrapper_direction])
+            if len(room_wrappers_to_hide_in) > 0:
+                mutable_master.furball.room_wrapper = \
+                  room_wrappers_to_hide_in[random_range(len(room_wrappers_to_hide_in))]
+            elif players_in(mutable_master.furball.room_wrapper) != []:
+                game_won = 1
+                mutable_master.current_card = ""
+                try:
+                    output_display_room(find_ending_room().identifier, \
+                      "win")
+                except AttributeError:
+                    output_centered_paragraph(1, "You've won the game!")
+                    output("<table style=\"margin-left: auto; " + \
+                      "margin-right: auto\"><tr><td>")
+                    output("<a href=\"" + get_action_url() + \
+                      "\"><img src=\"" + \
+                      convert_to_url("play_again.gif") + \
+                      "\" border=\"0\" alt=\"Play Again\"></a>")
+                    output("</td></tr></table>")
+                remove_mutable_data()
         next_players_turn()
 
 def random_range(range):

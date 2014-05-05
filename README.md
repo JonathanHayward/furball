@@ -1,4 +1,0 @@
-furball
-=======
-
-Catch the Furball

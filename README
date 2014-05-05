@@ -41,12 +41,16 @@ INSTALLATION AND SETUP
 
     Basics
 
-        * Run "./install" and answer the questions provided.  This will
-          run a Unix-flavor install script and should create
-          a working, out-of-the-box installation when supplied
-          appropriate values.
+        * To install, run "./install" and answer the questions provided.  This
+          will run a Unix-flavor install-style script and should create a
+          working, out-of-the-box installation when supplied appropriate
+          values.
 
-        * Edit the privacy policy, stored in
+        * To upgrade, run "./upgrade" and answer the questions provided. This
+          will run a Unix-flavor install-style script and should upgrade your
+          installation when provided appropriate values.
+
+        * If you have not done so, edit the privacy policy, stored in
           <the public Catch the Furball HTML directory>/privacy.html, so that
           its contents are appropriate to your site.
 

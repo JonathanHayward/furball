@@ -26,6 +26,15 @@ edit_is_enabled=no
 # change this.
 edit_password=xyzzy
 
+# Whether the furball always tries to move. If it does, the game is slightly
+# more challenging, and players should encounter more of the map.
+furball_always_tries_to_move=yes
+
+# Whether to make a more labyrinthine map. Set to yes for a map that has more
+# passages stretching out, and no for a map that is more clustered around the
+# center.
+more_labyrinthine_map=yes
+
 # How wide text inputs are.
 text_width=80
 
